@@ -22,19 +22,25 @@ export async function POST(req: NextRequest) {
         score: 0,
         matched_patterns: [],
       },
-      stopforumspam: application.email ? {
-        appears: false,
-        frequency: 0,
-        confidence: 0,
-      } : null,
-      github: application.github ? {
-        exists: true,
-        account_age_days: 180,
-        public_repos: 3,
-      } : null,
-      devpost: application.handle ? {
-        projects_found: 1,
-      } : null,
+      stopforumspam: application.email
+        ? {
+            appears: false,
+            frequency: 0,
+            confidence: 0,
+          }
+        : null,
+      github: application.github
+        ? {
+            exists: true,
+            account_age_days: 180,
+            public_repos: 3,
+          }
+        : null,
+      devpost: application.handle
+        ? {
+            projects_found: 1,
+          }
+        : null,
       blocklist_hit: false,
     },
   };
