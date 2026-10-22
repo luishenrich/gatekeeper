@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gatekeeper — synthesis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Sora:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0c1a1f;
+        --ink-soft: #1a2f36;
+        --paper: #e8f0e9;
+        --lime: #b8f03c;
+        --lime-deep: #8fb82a;
+        --warn: #e85d4c;
+        --muted: #5a6f74;
+        --line: rgba(12, 26, 31, 0.12);
+        --font-display: "Fraunces", Georgia, serif;
+        --font-body: "Sora", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--font-body);
+        color: var(--ink);
+        background: var(--paper);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .atmosphere {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(ellipse 90% 60% at 10% -10%, rgba(184, 240, 60, 0.28), transparent 55%),
+          radial-gradient(ellipse 70% 50% at 100% 20%, rgba(26, 47, 54, 0.08), transparent 50%),
+          linear-gradient(165deg, #f3f7f1 0%, var(--paper) 45%, #dce8df 100%);
+      }
+
+      .atmosphere::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 70%);
+        pointer-events: none;
+      }
+
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 1.25rem 4rem;
+      }
+
+      .hero {
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 2rem 0 3.5rem;
+        position: relative;
+      }
+
+      .hero-visual {
+        position: absolute;
+        inset: 8% 0 auto;
+        height: 42svh;
+        border-radius: 2px;
+        overflow: hidden;
+        background: var(--ink);
+        isolation: isolate;
+      }
+
+      .hero-visual::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(120deg, transparent 40%, rgba(184, 240, 60, 0.15) 100%),
+          repeating-linear-gradient(
+            -12deg,
+            transparent,
+            transparent 18px,
+            rgba(232, 240, 233, 0.04) 18px,
+            rgba(232, 240, 233, 0.04) 19px
+          );
+      }
+
+      .gate-bars {
+        position: absolute;
+        inset: 12% 8%;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+      }
+
+      .gate-bars span {
+        background: linear-gradient(180deg, var(--lime) 0%, var(--lime-deep) 100%);
+        transform-origin: bottom;
+        animation: rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+        opacity: 0.9;
+      }
+
+      .gate-bars span:nth-child(1) {
+        animation-delay: 0.05s;
+        height: 55%;
+        align-self: end;
+      }
+      .gate-bars span:nth-child(2) {
+        animation-delay: 0.12s;
+        height: 78%;
+        align-self: end;
+      }
+      .gate-bars span:nth-child(3) {
+        animation-delay: 0.18s;
+        height: 100%;
+        align-self: end;
+        background: var(--warn);
+      }
+      .gate-bars span:nth-child(4) {
+        animation-delay: 0.24s;
+        height: 62%;
+        align-self: end;
+      }
+      .gate-bars span:nth-child(5) {
+        animation-delay: 0.3s;
+        height: 40%;
+        align-self: end;
+      }
+
+      .brand {
+        font-family: var(--font-display);
+        font-size: clamp(3.4rem, 12vw, 5.5rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+        margin-top: 48svh;
+        animation: fadeUp 0.8s ease both;
+      }
+
+      .brand em {
+        font-style: normal;
+        color: var(--ink-soft);
+        position: relative;
+      }
+
+      .brand em::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0.08em;
+        height: 0.12em;
+        background: var(--lime);
+        transform: scaleX(0);
+        transform-origin: left;
+        animation: draw 0.7s 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      .tagline {
+        margin-top: 1rem;
+        font-size: clamp(1.15rem, 3.2vw, 1.35rem);
+        font-weight: 500;
+        max-width: 22ch;
+        animation: fadeUp 0.8s 0.1s ease both;
+      }
+
+      .support {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.98rem;
+        max-width: 36ch;
+        animation: fadeUp 0.8s 0.18s ease both;
+      }
+
+      .cta {
+        margin-top: 1.75rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        animation: fadeUp 0.8s 0.26s ease both;
+      }
+
+      .cta a {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 0.75rem 1.15rem;
+        border-radius: 2px;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .cta a:hover {
+        transform: translateY(-2px);
+      }
+
+      .cta .primary {
+        background: var(--ink);
+        color: var(--lime);
+      }
+
+      .cta .secondary {
+        background: transparent;
+        color: var(--ink);
+        border: 1.5px solid var(--ink);
+      }
+
+      section {
+        padding: 3.25rem 0 0;
+        border-top: 1px solid var(--line);
+        margin-top: 3.25rem;
+      }
+
+      section h2 {
+        font-family: var(--font-display);
+        font-size: 1.65rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.85rem;
+      }
+
+      section p,
+      section li {
+        color: var(--ink-soft);
+        font-size: 1rem;
+      }
+
+      section p + p,
+      section p + .pills,
+      section .pills + p,
+      section .keys + ul,
+      section p + ul {
+        margin-top: 0.75rem;
+      }
+
+      section a {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.86em;
+        font-weight: 600;
+        background: rgba(12, 26, 31, 0.06);
+        padding: 0.05rem 0.28rem;
+        border-radius: 2px;
+      }
+
+      .lead {
+        font-size: 1.08rem;
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      ul {
+        margin-top: 1rem;
+        list-style: none;
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      ul li {
+        padding-left: 1.1rem;
+        position: relative;
+      }
+
+      ul li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.55em;
+        width: 0.45rem;
+        height: 0.45rem;
+        background: var(--lime-deep);
+      }
+
+      .stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.15rem;
+      }
+
+      .stack span {
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        padding: 0.4rem 0.65rem;
+        background: var(--ink);
+        color: var(--paper);
+        border-radius: 2px;
+      }
+
+      .win-line {
+        margin-top: 1.25rem;
+        padding: 1rem 1.1rem;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: 500;
+        line-height: 1.35;
+        border-radius: 2px;
+      }
+
+      .win-line strong {
+        color: var(--lime);
+        font-weight: 700;
+      }
+
+      /* Product shots */
+      .shots {
+        margin-top: 1.5rem;
+        display: grid;
+        gap: 1.75rem;
+      }
+
+      .shots figure {
+        margin: 0;
+      }
+
+      .shots img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 2px;
+        border: 1px solid var(--line);
+        box-shadow: 0 18px 40px rgba(12, 26, 31, 0.12);
+        background: #fff;
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .shots figure:hover img {
+        transform: translateY(-4px);
+      }
+
+      .shots figcaption {
+        margin-top: 0.55rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .shot-grid {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      @media (min-width: 640px) {
+        .shot-grid.pair {
+          grid-template-columns: 1fr 1fr;
+          align-items: start;
+        }
+      }
+
+      .pr-strip {
+        margin-top: 1.35rem;
+        display: grid;
+        gap: 0.55rem;
+        animation: fadeUp 0.8s 0.34s ease both;
+      }
+
+      .pr-strip a {
+        color: var(--ink);
+        font-weight: 600;
+        font-size: 0.92rem;
+      }
+
+      .pr-note {
+        margin-top: 0.15rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+        max-width: 36ch;
+      }
+
+      .status-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.45rem 0.6rem;
+      }
+
+      .badge-open {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 0.22rem 0.45rem;
+        background: var(--lime);
+        color: var(--ink);
+        border-radius: 2px;
+      }
+
+      .pr-grid {
+        margin-top: 1.15rem;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      @media (min-width: 640px) {
+        .pr-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .pr-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+        padding: 1rem 1.05rem;
+        text-decoration: none;
+        color: inherit;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        transition: transform 0.2s ease;
+      }
+
+      .pr-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .pr-card h3 {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0.2rem 0 0;
+      }
+
+      .pr-card p {
+        color: var(--ink-soft);
+        font-size: 0.92rem;
+      }
+
+      .pr-card .url {
+        margin-top: 0.35rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--ink);
+        word-break: break-all;
+      }
+
+      section h3 {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-top: 1.35rem;
+        margin-bottom: 0.4rem;
+      }
+
+      a.pr-card h3 {
+        margin: 0.25rem 0 0;
+      }
+
+      .pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.85rem;
+      }
+
+      .pill {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        padding: 0.32rem 0.55rem;
+        border-radius: 2px;
+      }
+
+      .pill.accept {
+        background: #059669;
+        color: #f3f7f1;
+      }
+
+      .pill.ask {
+        background: #f59e0b;
+        color: #0c1a1f;
+      }
+
+      .pill.decline {
+        background: #e11d48;
+        color: #fff;
+      }
+
+      .pill.ink {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      kbd {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.05rem 0.38rem;
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      .aside {
+        margin-top: 1rem;
+        padding: 0.85rem 1rem;
+        border-left: 4px solid var(--warn);
+        background: rgba(232, 93, 76, 0.1);
+        color: var(--ink);
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+
+      .keys {
+        margin-top: 0.85rem;
+        color: var(--ink-soft);
+        font-size: 0.95rem;
+      }
+
+      footer {
+        margin-top: 3.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--line);
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes draw {
+        to {
+          transform: scaleX(1);
+        }
+      }
+
+      @keyframes rise {
+        from {
+          transform: scaleY(0);
+          opacity: 0;
+        }
+        to {
+          transform: scaleY(1);
+          opacity: 0.9;
+        }
+      }
+
+      @media (min-width: 720px) {
+        .hero-visual {
+          inset: 6% -2% auto auto;
+          width: 52%;
+          height: 48svh;
+        }
+
+        .brand {
+          margin-top: 0;
+          max-width: 10ch;
+        }
+
+        .hero {
+          justify-content: center;
+          padding-bottom: 4rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+
+        .brand em::after {
+          transform: scaleX(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <header class="hero">
+        <div class="hero-visual" aria-hidden="true">
+          <div class="gate-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <h1 class="brand">Gate<em>keeper</em></h1>
+        <p class="tagline">Stop scammers once. Keep them out everywhere.</p>
+        <p class="support">
+          AI scores community applications; communities share a privacy-safe blocklist so the next group doesn’t get burned.
+        </p>
+        <div class="cta">
+          <a class="primary" href="/queue">Open review queue</a>
+          <a class="secondary" href="/dashboard">Dashboard</a>
+          <a class="secondary" href="/apply">Apply</a>
+          <a class="secondary" href="#status">PRs</a>
+        </div>
+        <div class="pr-strip">
+          <p class="status-line">
+            <a href="https://github.com/luishenrich/gatekeeper/pull/4">PR #4 · queue redesign</a>
+            <span class="badge-open">Open</span>
+          </p>
+          <p class="status-line">
+            <a href="https://github.com/luishenrich/gatekeeper/pull/5">PR #5 · dashboard + apply</a>
+            <span class="badge-open">Open</span>
+          </p>
+          <p class="pr-note">Both created successfully. Neither is merged.</p>
+        </div>
+      </header>
+
+      <section id="status">
+        <h2>Pull requests</h2>
+        <p class="lead">
+          Person B’s two pull requests were created successfully and are still open. Neither has been merged.
+        </p>
+        <div class="pr-grid">
+          <a class="pr-card" href="https://github.com/luishenrich/gatekeeper/pull/4">
+            <span class="badge-open">Open · not merged</span>
+            <h3>PR #4 — queue redesign</h3>
+            <p>Projector review queue: two panes, keyboard triage, human send.</p>
+            <span class="url">github.com/luishenrich/gatekeeper/pull/4</span>
+          </a>
+          <a class="pr-card" href="https://github.com/luishenrich/gatekeeper/pull/5">
+            <span class="badge-open">Open · not merged</span>
+            <h3>PR #5 — dashboard + apply</h3>
+            <p>Lead dashboard and the public apply form, with shared top nav.</p>
+            <span class="url">github.com/luishenrich/gatekeeper/pull/5</span>
+          </a>
+        </div>
+      </section>
+
+      <section id="product">
+        <h2>In the product</h2>
+        <p class="lead">Live shots from the moderator review queue, including WhatsApp replies and Discord channel badges.</p>
+        <div class="shots">
+          <figure>
+            <img
+              src="/screenshots/queue-london.png"
+              alt="Gatekeeper review queue for London Agent Builders showing an ask verdict with Discord channel badge and score"
+              width="1280"
+              height="800"
+              loading="eager"
+            />
+            <figcaption>
+              Review queue — channel badge, score, masked contacts, Accept / Decline.
+            </figcaption>
+          </figure>
+
+          <figure>
+            <img
+              src="/screenshots/queue-blocklist-hit.png"
+              alt="WhatsApp application flagged with shared blocklist match banner and decline score of 10"
+              width="1280"
+              height="800"
+              loading="lazy"
+            />
+            <figcaption>
+              Cross-community hit — A22 on WhatsApp stopped by the shared HMAC blocklist.
+            </figcaption>
+          </figure>
+
+          <div class="shot-grid pair">
+            <figure>
+              <img
+                src="/screenshots/queue-report-blocklist.png"
+                alt="Decline panel with report to shared blocklist toggle and evidence field filled"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <figcaption>Decline + report to shared blocklist (evidence required).</figcaption>
+            </figure>
+            <figure>
+              <img
+                src="/screenshots/queue-reply-draft.png"
+                alt="Editable reply draft with Send reply via WhatsApp button"
+                width="800"
+                height="600"
+                loading="lazy"
+              />
+              <figcaption>Reply draft — nothing leaves until the lead clicks Send.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="queue">
+        <h2>Projector queue</h2>
+        <p class="lead">
+          PR #4 rebuilds <a href="/queue">/queue</a> as a two-pane projector UI: the list is <code>w-2/5</code>, the detail pane is <code>w-3/5</code>.
+        </p>
+        <p>
+          Segmented counts across the top filter the list: All, Decline, Ask, Accept. A filter menu narrows by channel, community, or blocklist hits only. Default sort puts blocklist hits first, then decline, ask, and accept.
+        </p>
+        <div class="pills" aria-label="Decision colours">
+          <span class="pill accept">Accept · emerald</span>
+          <span class="pill ask">Ask · amber</span>
+          <span class="pill decline">Decline · rose</span>
+        </div>
+        <p>
+          A blocklist row uses <code>border-l-8</code>. The detail card adds <code>ring-4</code> and a callout. That callout shows a hash prefix only — never the phone number.
+        </p>
+        <p class="keys">
+          Keyboard: <kbd>J</kbd> <kbd>K</kbd> move · <kbd>A</kbd> accept · <kbd>S</kbd> ask · <kbd>D</kbd> decline · <kbd>E</kbd> edit · <kbd>Enter</kbd> send · <kbd>Z</kbd> undo · <kbd>?</kbd> help.
+          The undo toast stays for 6 seconds. An empty list reads “Queue clear ✓”.
+        </p>
+        <ul>
+          <li>Read the queue with <code>GET /api/queue</code>, or <code>GET /api/mock/queue</code> when mocks are on.</li>
+          <li>Record a decision with <code>POST /api/decisions/:id</code>.</li>
+          <li>
+            <code>POST /api/channel/send</code> runs only when a human clicks Send or presses Enter — the same rule as the WhatsApp reply draft and Discord send in the shots above.
+          </li>
+        </ul>
+      </section>
+
+      <section id="dashboard">
+        <h2>Lead dashboard</h2>
+        <p class="lead">
+          PR #5 adds <a href="/dashboard">/dashboard</a> for leads only. Anyone else is redirected to <a href="/login">/login</a>.
+        </p>
+        <p>
+          Stats come from <code>GET /api/stats?community=</code>, or <code>GET /api/mock/stats</code> in the demo. A community switcher flips the numbers between groups.
+        </p>
+        <ul>
+          <li>Big stat cards: handled today, accepted, asked, declined, scammers stopped, and auto-sent questions.</li>
+          <li>Time saved is handled × 5 minutes, and the card is labelled as an estimate.</li>
+          <li>Recent decisions link through to <a href="/queue">/queue</a>.</li>
+          <li>An eval card reads “GPT-6 Luna 29/30, Jev 28/30, 0 false blocks”.</li>
+        </ul>
+      </section>
+
+      <section id="apply">
+        <h2>Public apply</h2>
+        <p class="lead">
+          PR #5 also adds <a href="/apply">/apply</a>, a public form with no account. Submit posts to <code>POST /api/score</code>.
+        </p>
+        <p>
+          The result card shows a decision pill, the score, the cited rule, and signal chips. A blocklist hit uses the same callout as the queue: hash prefix only, never the phone. A decline on this page never shows a reply draft.
+        </p>
+        <p class="aside">
+          “Try a known scammer” prefills applicant A21 as <strong>@cryptomax_alpha1</strong>.
+        </p>
+      </section>
+
+      <section id="nav">
+        <h2>Top navigation</h2>
+        <p class="lead">Every page carries the same bar.</p>
+        <div class="pills" aria-label="Top navigation">
+          <span class="pill ink">Dashboard</span>
+          <span class="pill ink">Queue</span>
+          <span class="pill ink">Apply</span>
+          <span class="pill ink">Eval</span>
+        </div>
+        <p>
+          Dashboard, Queue, Apply, and Eval stay one click apart, including on the WhatsApp and Discord review flows already in the product shots.
+        </p>
+      </section>
+
+      <section id="what">
+        <h2>What it does</h2>
+        <p class="lead">
+          Gatekeeper turns messy join requests into clear moderator decisions—and makes one community’s block count for the next.
+        </p>
+        <ul>
+          <li>
+            Scores each application against your own rules: accept, ask, or decline, with a reason that cites the rule.
+          </li>
+          <li>
+            Puts unclear cases and blocklist hits into a review queue with human control on every outbound reply.
+          </li>
+          <li>
+            Shares a cross-community blocklist of HMAC-hashed phone, handle, and email—never the raw values.
+          </li>
+          <li>
+            Intakes from web, WhatsApp Cloud API, and Discord join checks—drafts only; a human still presses send or kick.
+          </li>
+        </ul>
+      </section>
+
+      <section id="value">
+        <h2>Added value</h2>
+        <p class="lead">Communities already moderate alone. Gatekeeper makes moderation compound.</p>
+        <p>
+          Today a crypto pump kicked from London Agent Builders just changes the handle and joins South London Hack Nights. Shared HMAC matching stops that hop without leaking member data. Moderators keep the final say; the model only drafts and routes.
+        </p>
+      </section>
+
+      <section id="tech">
+        <h2>Technology</h2>
+        <p class="lead">Demo-reliable stack, privacy by design, human in the loop.</p>
+        <div class="stack">
+          <span>Next.js</span>
+          <span>TypeScript</span>
+          <span>Supabase + RLS</span>
+          <span>LLM scoring</span>
+          <span>HMAC-SHA256</span>
+          <span>WhatsApp Cloud API</span>
+          <span>discord.js</span>
+          <span>MIT</span>
+        </div>
+      </section>
+
+      <section id="why">
+        <h2>Why it should win</h2>
+        <p class="lead">
+          The Track 1 money shot: one decline, one report, then an instant stop in the second community—on stage, under three minutes.
+        </p>
+        <ul>
+          <li>Solves a real organiser pain, not a toy chatbot.</li>
+          <li>Privacy-safe collaboration between communities.</li>
+          <li>Human-in-the-loop by design; ships with mocks and a WhatsApp simulator.</li>
+          <li>Open source (MIT) so other communities can run it after tonight.</li>
+        </ul>
+        <p class="win-line">
+          <strong>Gatekeeper</strong> is the missing shared immune system for builder communities—fast for humans, hostile to hops.
+        </p>
+      </section>
+
+      <footer>
+        Grok Bot Community Engineering London · Track 1 · Gatekeeper
+      </footer>
+    </div>
+  </body>
+</html>

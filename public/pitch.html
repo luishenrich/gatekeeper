@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Greenlight — pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Figtree:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --ink: #111111;
+        --muted: #616161;
+        --border: #e5e5e5;
+        --card: #f5f5f5;
+        --green: #22c55e;
+        --emerald: #059669;
+        --amber: #f59e0b;
+        --rose: #e11d48;
+        --font-display: "EB Garamond", Georgia, serif;
+        --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-sans);
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .deck {
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        padding: clamp(1.75rem, 5vw, 4rem) clamp(1.5rem, 6vw, 5rem)
+          calc(3.5rem + env(safe-area-inset-bottom, 0px));
+        background: var(--bg);
+      }
+
+      .slide.active {
+        display: flex;
+        animation: in 0.28s ease both;
+      }
+
+      .slide.band {
+        background: var(--ink);
+        color: #fff;
+      }
+
+      .slide.band .muted,
+      .slide.band .support {
+        color: rgba(255, 255, 255, 0.68);
+      }
+
+      .slide.muted-bg {
+        background: #fafafa;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-bottom: 1.75rem;
+      }
+
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 10px;
+        background: var(--ink);
+        flex-shrink: 0;
+      }
+
+      .mark svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .brand-name {
+        font-family: var(--font-display);
+        font-size: 1.35rem;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+
+      .eyebrow {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.85rem;
+      }
+
+      .slide.band .eyebrow {
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-weight: 400;
+        font-size: clamp(2.75rem, 8vw, 5.5rem);
+        letter-spacing: -0.02em;
+        line-height: 0.95;
+        max-width: 16ch;
+      }
+
+      h1 em {
+        font-style: italic;
+      }
+
+      h2 {
+        font-family: var(--font-display);
+        font-weight: 400;
+        font-size: clamp(2rem, 5.5vw, 3.5rem);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        max-width: 22ch;
+        margin-bottom: 1.35rem;
+      }
+
+      .tagline {
+        margin-top: 1.15rem;
+        font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+        font-weight: 400;
+        color: var(--muted);
+        max-width: 36ch;
+        line-height: 1.45;
+      }
+
+      .support {
+        margin-top: 0.85rem;
+        font-size: 1.05rem;
+        color: var(--muted);
+        max-width: 42ch;
+        line-height: 1.5;
+      }
+
+      ul {
+        list-style: none;
+        display: grid;
+        gap: 0.85rem;
+        max-width: 48rem;
+      }
+
+      li {
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        font-weight: 400;
+        line-height: 1.45;
+        padding-left: 1.15rem;
+        position: relative;
+        color: var(--ink);
+      }
+
+      .slide.band li {
+        color: #fff;
+      }
+
+      li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.55em;
+        width: 0.4rem;
+        height: 0.4rem;
+        border-radius: 999px;
+        background: var(--emerald);
+      }
+
+      .slide.band li::before {
+        background: var(--green);
+      }
+
+      .grid-2 {
+        display: grid;
+        gap: 0.85rem;
+        margin-top: 0.25rem;
+      }
+
+      @media (min-width: 720px) {
+        .grid-2 {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        padding: 1.15rem 1.25rem;
+        background: #fff;
+      }
+
+      .slide.band .card {
+        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .card h3 {
+        font-family: var(--font-display);
+        font-size: 1.35rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.35rem;
+      }
+
+      .card p {
+        font-size: 0.98rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .slide.band .card p {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+      }
+
+      .pill.accept {
+        background: var(--emerald);
+        color: #fff;
+      }
+      .pill.ask {
+        background: var(--amber);
+        color: #111;
+      }
+      .pill.decline {
+        background: var(--rose);
+        color: #fff;
+      }
+      .pill.ink {
+        background: var(--ink);
+        color: #fff;
+      }
+      .pill.outline {
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--ink);
+      }
+      .slide.band .pill.outline {
+        border-color: rgba(255, 255, 255, 0.35);
+        background: transparent;
+        color: #fff;
+      }
+
+      .stat-row {
+        display: grid;
+        gap: 0;
+        margin-top: 0.5rem;
+      }
+
+      @media (min-width: 640px) {
+        .stat-row {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .stat {
+        border-left: 1px solid var(--border);
+        padding: 0.25rem 0 0.25rem 1.25rem;
+      }
+
+      .stat:first-child {
+        border-left: none;
+        padding-left: 0;
+      }
+
+      .stat dt {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+
+      .stat dd {
+        margin-top: 0.35rem;
+        font-family: var(--font-display);
+        font-size: clamp(2.5rem, 5vw, 3.75rem);
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        tabular-nums: true;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .stat dd span {
+        font-size: 0.45em;
+        color: var(--muted);
+      }
+
+      .win {
+        margin-top: 1.75rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 3vw, 1.85rem);
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+        max-width: 28ch;
+      }
+
+      .footer-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.85rem 1.25rem;
+        background: rgba(255, 255, 255, 0.92);
+        border-top: 1px solid var(--border);
+        backdrop-filter: blur(8px);
+        font-size: 0.8rem;
+        color: var(--muted);
+        z-index: 5;
+      }
+
+      .footer-bar kbd {
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.12rem 0.4rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--ink);
+        background: #fff;
+      }
+
+      .progress {
+        display: flex;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+      }
+
+      .dot {
+        width: 0.4rem;
+        height: 0.4rem;
+        border-radius: 50%;
+        background: var(--border);
+      }
+
+      .dot.on {
+        background: var(--ink);
+      }
+
+      @keyframes in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .slide.active {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="deck" id="deck">
+      <!-- 1 Title -->
+      <section class="slide active" data-title="Title">
+        <div class="brand-row">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path
+                d="M16 4.5l9 3.4v6.7c0 5.8-3.9 10.3-9 12.7-5.1-2.4-9-6.9-9-12.7V7.9l9-3.4z"
+                fill="#22C55E"
+              />
+            </svg>
+          </span>
+          <span class="brand-name">Greenlight</span>
+        </div>
+        <p class="eyebrow">Trust &amp; safety for community builders</p>
+        <h1>Let builders in. Keep scammers <em>out</em>.</h1>
+        <p class="tagline">
+          Scores WhatsApp applications against your rules, checks a shared hashed blocklist, and holds every decline for a human click.
+        </p>
+        <div class="pills">
+          <span class="pill accept">Accept</span>
+          <span class="pill ask">Ask</span>
+          <span class="pill decline">Decline held</span>
+          <span class="pill outline">Lead clicks Send</span>
+        </div>
+      </section>
+
+      <!-- 2 Problem -->
+      <section class="slide muted-bg" data-title="Problem">
+        <p class="eyebrow">The gap</p>
+        <h2>Scammers hop. WhatsApp has no shared ban list.</h2>
+        <ul>
+          <li>Declined in community A → new handle in community B.</li>
+          <li>CAS, Mjolnir and FedBot are locked to one platform and only ask “known spammer?” — not “fits <em>our</em> rules?”</li>
+          <li>No verified shared blocklist for WhatsApp groups.</li>
+          <li>Volunteer leads re-read every application alone.</li>
+        </ul>
+      </section>
+
+      <!-- 3 Product -->
+      <section class="slide" data-title="Product">
+        <p class="eyebrow">What we built · WhatsApp-first</p>
+        <h2>Rules fit + shared hashes + human Send.</h2>
+        <ul>
+          <li><strong>AI reviewer</strong> — accept / ask / decline with a plain-English reason citing the rule.</li>
+          <li><strong>Shared blocklist</strong> — HMAC-SHA256 keyed hashes in Supabase, RLS per community, appeal path. No raw phone, email or handle.</li>
+          <li><strong>WhatsApp Cloud API</strong> — signed webhook; apply in a 1:1 chat and get a reply.</li>
+          <li><strong>Human in the loop</strong> — declines wait for a lead to click.</li>
+        </ul>
+      </section>
+
+      <!-- 4 Demo -->
+      <section class="slide muted-bg" data-title="Demo">
+        <p class="eyebrow">/demo · three beats</p>
+        <h2>Never declines on its own.</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>1 · Normal applicant</h3>
+            <p>WhatsApp message → signature verified → blocklist clear → reply cites the rule.</p>
+          </div>
+          <div class="card">
+            <h3>2 · @cryptomax_alpha1</h3>
+            <p>Keyed-hash match → decline recommended — and <strong>held</strong>.</p>
+          </div>
+          <div class="card">
+            <h3>3 · You as the lead</h3>
+            <p>Read the reason. Click Send. That’s the greenlight.</p>
+          </div>
+          <div class="card">
+            <h3>Live</h3>
+            <p>gatekeeper-kinglhb.vercel.app/demo</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 Evidence -->
+      <section class="slide" data-title="Evidence">
+        <p class="eyebrow">200 labelled applicants</p>
+        <h2>Every scammer out. Zero honest people blocked.</h2>
+        <dl class="stat-row">
+          <div class="stat">
+            <dt>Jev</dt>
+            <dd>195<span>/200</span></dd>
+          </div>
+          <div class="stat">
+            <dt>GPT-6 Luna</dt>
+            <dd>179<span>/200</span></dd>
+          </div>
+          <div class="stat">
+            <dt>False blocks</dt>
+            <dd>0</dd>
+          </div>
+          <div class="stat">
+            <dt>Missed scammers</dt>
+            <dd>0</dd>
+          </div>
+        </dl>
+        <p class="support" style="margin-top: 1.75rem; max-width: 48ch">
+          97.5% on Jev · ~⅓¢ per applicant · all 60 scammers declined · no bot let in. Declines wait for a lead click — we don’t claim every miss goes to a human.
+        </p>
+      </section>
+
+      <!-- 6 Close -->
+      <section class="slide band" data-title="Close">
+        <div class="brand-row">
+          <span class="mark" aria-hidden="true" style="background: #fff">
+            <svg viewBox="0 0 32 32">
+              <path
+                d="M16 4.5l9 3.4v6.7c0 5.8-3.9 10.3-9 12.7-5.1-2.4-9-6.9-9-12.7V7.9l9-3.4z"
+                fill="#22C55E"
+              />
+            </svg>
+          </span>
+          <span class="brand-name">Greenlight</span>
+        </div>
+        <p class="eyebrow">MIT · self-host next week</p>
+        <h2>Greenlight: let the right people in.</h2>
+        <div class="pills" style="margin-top: 0">
+          <span class="pill outline">Next.js</span>
+          <span class="pill outline">Supabase + RLS</span>
+          <span class="pill outline">HMAC</span>
+          <span class="pill outline">WhatsApp</span>
+          <span class="pill outline">MIT</span>
+        </div>
+        <p class="win">Let builders in. Keep scammers out.</p>
+        <p class="support">github.com/luishenrich/gatekeeper</p>
+      </section>
+    </div>
+
+    <div class="footer-bar">
+      <span id="label">1 / 6 · Title</span>
+      <div class="progress" id="progress" aria-hidden="true"></div>
+      <span><kbd>←</kbd> <kbd>→</kbd> · <kbd>F</kbd> fullscreen</span>
+    </div>
+
+    <script>
+      const slides = [...document.querySelectorAll(".slide")];
+      const label = document.getElementById("label");
+      const progress = document.getElementById("progress");
+      let i = 0;
+
+      slides.forEach(() => {
+        const d = document.createElement("span");
+        d.className = "dot";
+        progress.appendChild(d);
+      });
+
+      function show(n) {
+        i = (n + slides.length) % slides.length;
+        slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+        [...progress.children].forEach((d, idx) =>
+          d.classList.toggle("on", idx === i)
+        );
+        label.textContent =
+          i + 1 + " / " + slides.length + " · " + (slides[i].dataset.title || "");
+      }
+      show(0);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          show(i + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          show(i - 1);
+        } else if (e.key === "Home") show(0);
+        else if (e.key === "End") show(slides.length - 1);
+        else if (e.key.toLowerCase() === "f") {
+          if (!document.fullscreenElement)
+            document.documentElement.requestFullscreen?.();
+          else document.exitFullscreen?.();
+        }
+      });
+
+      document.getElementById("deck").addEventListener("click", (e) => {
+        if (e.target.closest("a, button")) return;
+        show(e.clientX > window.innerWidth / 2 ? i + 1 : i - 1);
+      });
+    </script>
+  </body>
+</html>
