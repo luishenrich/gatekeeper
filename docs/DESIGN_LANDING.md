@@ -1,4 +1,4 @@
-# Gatekeeper — Landing (`/`) + Sign-in (`/login`) upgrade brief
+# Greenlight — Landing (`/`) + Sign-in (`/login`) upgrade brief
 
 ## 0. What's live now (fetched 22 Oct 2026, 20:1x BST, https://gatekeeper-kinglhb.vercel.app)
 - `/` has a title "Gatekeeper", the tagline "Community application vetting with AI scoring and shared blocklist", and two links: **Review Queue** (`/queue`) and **Eval Dashboard** (`/eval`). There is no hero visual, proof, comparison or footer.

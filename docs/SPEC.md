@@ -1,4 +1,4 @@
-# Gatekeeper — build spec (draft, 22 Oct 2026)
+# Greenlight — build spec (draft, 22 Oct 2026)
 
 Goal: stop scammers getting into communities while letting real builders in fast. Demo-first; cut scope before risking a broken demo.
 

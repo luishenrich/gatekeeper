@@ -1,4 +1,4 @@
-# Gatekeeper evaluation data: sources and licences
+# Greenlight evaluation data: sources and licences
 
 Files:
 - `applicants_large.json` / `applicants_large.csv`: 200 labelled applications. Same schema as `applicants.json`, plus a `source` field.

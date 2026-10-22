@@ -1,4 +1,4 @@
-# Gatekeeper Discord bot
+# Greenlight Discord bot
 
 Join-check bot for the shared HMAC blocklist. Flags matches in a mod channel; **never kicks without a human click**.
 

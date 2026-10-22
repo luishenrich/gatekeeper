@@ -1,6 +1,6 @@
-# Gatekeeper
+# Greenlight
 
-Stop scammers getting into communities while letting real builders in fast. Gatekeeper scores applications against community rules using AI, maintains a shared blocklist across communities (HMAC-hashed for privacy), and provides a review queue for moderators. Built for hackathon Track 1 (community infrastructure).
+Stop scammers getting into communities while letting real builders in fast. Greenlight scores applications against community rules using AI, maintains a shared blocklist across communities (HMAC-hashed for privacy), and provides a review queue for moderators. Built for hackathon Track 1 (community infrastructure).
 
 ## Architecture
 
@@ -94,7 +94,7 @@ The shared blocklist lets communities warn each other about scammers without exp
 
 ## WhatsApp Intake Channel Setup
 
-Gatekeeper can accept applications via WhatsApp using the official Meta WhatsApp Cloud API (no third-party libraries).
+Greenlight can accept applications via WhatsApp using the official Meta WhatsApp Cloud API (no third-party libraries).
 
 ### Meta Business Setup
 
@@ -124,7 +124,7 @@ Gatekeeper can accept applications via WhatsApp using the official Meta WhatsApp
 
 1. **User sends a WhatsApp message** to your WhatsApp Business number
 2. **Meta webhook calls** `POST /api/whatsapp/webhook` with the message
-3. **Gatekeeper scores** the application (same internal function as web API)
+3. **Greenlight scores** the application (same internal function as web API)
 4. **Auto-reply based on decision:**
    - `accept` → "Thanks! Your application looks good, and a lead will confirm shortly."
    - `ask` → Follow-up question from scorer's reason (e.g. "Missing info: which community do you run?")

@@ -1,4 +1,4 @@
-# Gatekeeper demo dataset (Track 1) — all applicant data is FICTIONAL
+# Greenlight demo dataset (Track 1) — all applicant data is FICTIONAL
 
 | File | Contents |
 |---|---|

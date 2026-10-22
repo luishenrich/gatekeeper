@@ -1,4 +1,4 @@
-# Gatekeeper: handoff for Person B (UI + Discord bot)
+# Greenlight: handoff for Person B (UI + Discord bot)
 
 Hackathon: Grok Bot Community Engineering London, Thu 22 Oct 2026. **Code freeze 21:50 London time.** Top-5 live demos at 22:20, 3 min each.
 Track 1 "Gatekeeper": review applications, keep scammers out, share a blocklist across communities. Must be open source (public GitHub repo, MIT).
