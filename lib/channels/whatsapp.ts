@@ -94,7 +94,7 @@ export class WhatsAppAdapter implements ChannelAdapter {
 
     const waId = to.replace(/^\+/, "");
 
-    await fetch(`https://graph.facebook.com/v26.0/${this.phoneNumberId}/messages`, {
+    const res = await fetch(`https://graph.facebook.com/v26.0/${this.phoneNumberId}/messages`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.token}`,
@@ -108,5 +108,10 @@ export class WhatsAppAdapter implements ChannelAdapter {
         text: { preview_url: false, body: text },
       }),
     });
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`WhatsApp API error (${res.status}): ${body}`);
+    }
   }
 }
