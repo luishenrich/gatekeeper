@@ -46,7 +46,8 @@ async function simulate() {
   }
 
   const body = JSON.stringify(payload);
-  const signature = `sha256=${crypto.createHmac("sha256", appSecret).update(body).digest("hex")}`;
+  const hmac = crypto.createHmac("sha256", appSecret).update(body, "utf8").digest("hex");
+  const signature = `sha256=${hmac}`;
 
   const url = process.env.GATEKEEPER_API_URL || "http://localhost:3000";
 

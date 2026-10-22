@@ -4,6 +4,7 @@ export interface InboundMessage {
   handle?: string;
   text: string;
   channel_ref?: string;
+  forwarded?: boolean;
 }
 
 export interface ChannelAdapter {

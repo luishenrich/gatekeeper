@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
       text: message.text,
       channel: "whatsapp",
       channel_ref: message.channel_ref,
+      forwarded: message.forwarded,
     });
 
     if (result.decision === "accept") {

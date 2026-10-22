@@ -30,24 +30,24 @@ export class WhatsAppAdapter implements ChannelAdapter {
     return null;
   }
 
-  verifySignature(body: string, signature: string): boolean {
-    if (!this.appSecret || !signature) return false;
-    const expected = crypto
-      .createHmac("sha256", this.appSecret)
-      .update(body)
-      .digest("hex");
-    return `sha256=${expected}` === signature;
+  verifySignature(rawBody: string, header: string): boolean {
+    if (!this.appSecret || !header?.startsWith("sha256=")) return false;
+    const expected = crypto.createHmac("sha256", this.appSecret).update(rawBody, "utf8").digest("hex");
+    const receivedHex = header.slice(7);
+    const a = Buffer.from(receivedHex, "hex");
+    const b = Buffer.from(expected, "hex");
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
   }
 
   async parseInbound(req: Request): Promise<InboundMessage | null> {
-    const body = await req.text();
+    const rawBody = await req.text();
     const signature = req.headers.get("X-Hub-Signature-256") || "";
 
-    if (!this.verifySignature(body, signature)) {
+    if (!this.verifySignature(rawBody, signature)) {
       throw new Error("Invalid signature");
     }
 
-    const data = JSON.parse(body);
+    const data = JSON.parse(rawBody);
 
     for (const entry of data.entry || []) {
       for (const change of entry.changes || []) {
@@ -70,12 +70,15 @@ export class WhatsAppAdapter implements ChannelAdapter {
 
           const waId = message.from;
           const text = message.text?.body || "";
+          const context = message.context;
+          const forwarded = !!(context?.forwarded || context?.frequently_forwarded);
 
           return {
             sender_id: waId,
             phone: `+${waId}`,
             text,
             channel_ref: messageId,
+            forwarded,
           };
         }
       }
@@ -91,7 +94,7 @@ export class WhatsAppAdapter implements ChannelAdapter {
 
     const waId = to.replace(/^\+/, "");
 
-    await fetch(`https://graph.facebook.com/v21.0/${this.phoneNumberId}/messages`, {
+    await fetch(`https://graph.facebook.com/v26.0/${this.phoneNumberId}/messages`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.token}`,
@@ -99,9 +102,10 @@ export class WhatsAppAdapter implements ChannelAdapter {
       },
       body: JSON.stringify({
         messaging_product: "whatsapp",
+        recipient_type: "individual",
         to: waId,
         type: "text",
-        text: { body: text },
+        text: { preview_url: false, body: text },
       }),
     });
   }

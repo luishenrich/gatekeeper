@@ -26,6 +26,7 @@ export async function scoreApplicationInternal(
     text: string;
     channel?: string;
     channel_ref?: string;
+    forwarded?: boolean;
   }
 ): Promise<ScoringResult> {
   const { data: community }: { data: any | null } = await supabaseServer
@@ -79,6 +80,7 @@ export async function scoreApplicationInternal(
     github: null,
     devpost: null,
     blocklist_hit: false,
+    forwarded: application.forwarded || false,
   };
 
   if (blocklistMatches && blocklistMatches.length > 0) {
