@@ -137,7 +137,11 @@
     "blocklist_match": {
       "matched_on": ["phone", "handle"],
       "status": "confirmed",
-      "reported_at": "2026-10-22T18:00:00Z"
+      "reported_at": "2026-10-22T18:00:00Z",
+      "hash_prefix": "hmac:3f9a…",
+      "prior_community_name": "London Agent Builders",
+      "prior_reason": "crypto pump, guaranteed returns",
+      "matched_handle": "@cryptomax_alpha"
     }
   },
   {

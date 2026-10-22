@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { timingSafeEqual } from "crypto";
-import LegacyQueue from "@/components/queue/LegacyQueue";
+import ReviewQueue from "@/components/queue/ReviewQueue";
 
 export const dynamic = "force-dynamic";
 
@@ -18,5 +18,5 @@ export default async function QueuePage() {
   const token = process.env.QUEUE_ADMIN_TOKEN || "";
   const jar = await cookies();
   const authed = cookieMatches(jar.get("gk_lead")?.value, token);
-  return <LegacyQueue useMocks={useMocks} authed={authed} />;
+  return <ReviewQueue useMocks={useMocks} authed={authed} />;
 }
