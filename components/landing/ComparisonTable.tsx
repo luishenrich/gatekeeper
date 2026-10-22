@@ -1,9 +1,10 @@
-import clsx from "clsx";
 import { Check, Minus, X } from "lucide-react";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 type Cell = "yes" | "no" | "partial";
 
-const TOOLS = ["Gatekeeper", "Combot CAS", "Mjolnir / Draupnir", "Discord FedBot"] as const;
+const TOOLS = ["Greenlight", "Combot CAS", "Mjolnir / Draupnir", "Discord FedBot"] as const;
 
 // Conservative, based on each project's public docs. When unsure we say "Partial" or "No".
 const ROWS: { label: string; hint?: string; cells: [Cell, Cell, Cell, Cell] }[] = [
@@ -39,17 +40,19 @@ const ROWS: { label: string; hint?: string; cells: [Cell, Cell, Cell, Cell] }[] 
   },
 ];
 
-const CELL: Record<Cell, { Icon: typeof Check; word: string; cls: string }> = {
-  yes: { Icon: Check, word: "Yes", cls: "text-emerald-800 [&_svg]:bg-emerald-100 [&_svg]:text-emerald-700" },
-  no: { Icon: X, word: "No", cls: "text-slate-600 [&_svg]:bg-slate-100 [&_svg]:text-slate-500" },
-  partial: { Icon: Minus, word: "Partial", cls: "text-amber-900 [&_svg]:bg-amber-100 [&_svg]:text-amber-700" },
+const CELL: Record<Cell, { Icon: typeof Check; word: string; text: string; dot: string }> = {
+  yes: { Icon: Check, word: "Yes", text: "text-emerald-800", dot: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
+  no: { Icon: X, word: "No", text: "text-muted-foreground", dot: "bg-muted text-muted-foreground ring-border" },
+  partial: { Icon: Minus, word: "Partial", text: "text-orange-800", dot: "bg-orange-50 text-orange-700 ring-orange-200" },
 };
 
 function CellMark({ value }: { value: Cell }) {
-  const { Icon, word, cls } = CELL[value];
+  const { Icon, word, text, dot } = CELL[value];
   return (
-    <span className={clsx("inline-flex items-center gap-2 text-[15px] font-semibold", cls)}>
-      <Icon className="h-6 w-6 shrink-0 rounded-full p-1" aria-hidden strokeWidth={3} />
+    <span className={cn("inline-flex items-center gap-2 text-[15px]", text)}>
+      <span className={cn("grid h-6 w-6 shrink-0 place-items-center rounded-full ring-1", dot)}>
+        <Icon className="h-3.5 w-3.5" aria-hidden strokeWidth={2.5} />
+      </span>
       {word}
     </span>
   );
@@ -57,44 +60,43 @@ function CellMark({ value }: { value: Cell }) {
 
 export function ComparisonTable() {
   return (
-    <div className="overflow-x-auto rounded-2xl border-2 border-slate-200 bg-white">
-      <table className="w-full min-w-[720px] border-collapse text-left">
-        <caption className="sr-only">Gatekeeper compared with other community moderation tools</caption>
-        <thead>
-          <tr className="border-b-2 border-slate-200 bg-slate-50">
-            <th scope="col" className="w-[36%] px-5 py-4 text-[14px] font-bold uppercase tracking-wide text-slate-600">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_20px_60px_-40px_rgba(0,0,0,0.35)]">
+      <Table className="min-w-[760px] text-[15px]">
+        <TableCaption className="sr-only">Greenlight compared with other community moderation tools</TableCaption>
+        <TableHeader>
+          <TableRow className="border-border hover:bg-transparent">
+            <TableHead className="h-14 w-[34%] px-5 text-[12px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               Capability
-            </th>
+            </TableHead>
             {TOOLS.map((t, i) => (
-              <th
+              <TableHead
                 key={t}
-                scope="col"
-                className={clsx(
-                  "px-5 py-4 text-[15px] font-bold",
-                  i === 0 ? "bg-slate-900 text-white" : "text-slate-900"
+                className={cn(
+                  "h-14 px-5 text-[15px] font-medium text-foreground",
+                  i === 0 && "bg-emerald-50 font-display text-[19px]"
                 )}
               >
                 {t}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y-2 divide-slate-100">
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {ROWS.map((row) => (
-            <tr key={row.label}>
-              <th scope="row" className="px-5 py-4 align-top font-semibold text-slate-900">
+            <TableRow key={row.label} className="border-border hover:bg-muted/40">
+              <TableHead scope="row" className="h-auto px-5 py-4 align-top font-normal text-foreground">
                 {row.label}
-                {row.hint ? <span className="mt-0.5 block text-[14px] font-normal text-slate-600">{row.hint}</span> : null}
-              </th>
+                {row.hint ? <span className="mt-0.5 block text-[13px] text-muted-foreground">{row.hint}</span> : null}
+              </TableHead>
               {row.cells.map((c, i) => (
-                <td key={TOOLS[i]} className={clsx("px-5 py-4 align-top", i === 0 && "bg-slate-50")}>
+                <TableCell key={TOOLS[i]} className={cn("px-5 py-4 align-top", i === 0 && "bg-emerald-50/50")}>
                   <CellMark value={c} />
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

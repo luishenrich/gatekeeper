@@ -147,13 +147,7 @@ export function HeroQueueDemo() {
 
   return (
     <div className="relative">
-      {/* Soft glow behind the card */}
-      <div
-        aria-hidden
-        className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-rose-100/70 via-slate-100 to-indigo-100/70 blur-2xl"
-      />
-
-      <figure className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-[0_24px_60px_-20px_rgba(15,23,42,0.25)]">
+      <figure className="overflow-hidden rounded-2xl border border-border bg-card/95 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] backdrop-blur">
         <figcaption className="sr-only">
           Demo data, fictional applicant. In the review queue for South London
           Hack Nights, a WhatsApp application from @cryptomax_alpha1 arrives,
@@ -164,31 +158,31 @@ export function HeroQueueDemo() {
 
         <div aria-hidden>
           {/* Window bar */}
-          <div className="flex items-center justify-between gap-3 border-b-2 border-slate-200 bg-slate-50 px-4 py-2.5">
+          <div className="flex items-center justify-between gap-3 border-b border-border bg-background/70 px-4 py-2.5">
             <div className="flex min-w-0 items-center gap-2">
               <span className="flex gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
+                <span className="h-2.5 w-2.5 rounded-full bg-border" />
+                <span className="h-2.5 w-2.5 rounded-full bg-border" />
+                <span className="h-2.5 w-2.5 rounded-full bg-border" />
               </span>
-              <span className="ml-2 truncate text-[14px] font-semibold text-slate-700">
+              <span className="ml-2 truncate text-[14px] text-foreground/80">
                 Review queue · South London Hack Nights
               </span>
             </div>
-            <span className="shrink-0 rounded-md border border-dashed border-slate-400 bg-white px-2 py-0.5 text-[12px] font-bold uppercase tracking-wide text-slate-700">
+            <span className="shrink-0 rounded-full border border-border bg-card px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
               Demo data
             </span>
           </div>
 
           {/* Queue list */}
-          <ul className="divide-y-2 divide-slate-100">
+          <ul className="divide-y divide-border/70">
             <li
               className={clsx(
-                "relative border-l-8 transition-colors duration-200 ease-out motion-reduce:transition-none",
+                "relative border-l-4 transition-colors duration-200 ease-out motion-reduce:transition-none",
                 decided
-                  ? "border-l-rose-600 bg-rose-50/60"
+                  ? "border-l-rose-400 bg-rose-50/60"
                   : arrived
-                    ? "border-l-slate-300 bg-amber-50/70"
+                    ? "border-l-border bg-muted/60"
                     : "border-l-transparent",
               )}
             >
@@ -196,13 +190,13 @@ export function HeroQueueDemo() {
               {step < 2 ? (
                 <div
                   className={clsx(
-                    "absolute inset-0 flex items-center gap-2 px-4 text-[15px] text-slate-600 transition-opacity duration-200 motion-reduce:transition-none",
+                    "absolute inset-0 flex items-center gap-2 px-4 text-[15px] text-muted-foreground transition-opacity duration-200 motion-reduce:transition-none",
                     arrived ? "opacity-0" : "opacity-100",
                   )}
                 >
                   <span className="relative flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-400 opacity-60 motion-reduce:animate-none" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-slate-500" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70 motion-reduce:animate-none" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-600" />
                   </span>
                   Listening for new applications…
                 </div>
@@ -214,7 +208,7 @@ export function HeroQueueDemo() {
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-[15px] font-bold text-slate-900">
+                    <span className="font-mono text-[15px] text-foreground">
                       @cryptomax_alpha1
                     </span>
                     <span
@@ -226,7 +220,7 @@ export function HeroQueueDemo() {
                       <BlocklistBadge />
                     </span>
                   </div>
-                  <div className="mt-1 flex min-w-0 items-center gap-2 text-[14px] text-slate-600">
+                  <div className="mt-1 flex min-w-0 items-center gap-2 text-[14px] text-muted-foreground">
                     <ChannelBadge channel="whatsapp" />
                     <span className="truncate">Max Moonshot · just now</span>
                   </div>
@@ -234,7 +228,7 @@ export function HeroQueueDemo() {
                 <div className="relative grid h-8 w-[7.5rem] shrink-0 place-items-end">
                   <span
                     className={clsx(
-                      "absolute right-0 top-1/2 -translate-y-1/2 text-[14px] font-semibold text-slate-600 transition-opacity duration-200 motion-reduce:transition-none",
+                      "absolute right-0 top-1/2 -translate-y-1/2 text-[14px] text-muted-foreground transition-opacity duration-200 motion-reduce:transition-none",
                       decided ? "opacity-0" : "opacity-100",
                     )}
                   >
@@ -246,7 +240,7 @@ export function HeroQueueDemo() {
                       decided ? "scale-100 opacity-100" : "scale-95 opacity-0",
                     )}
                   >
-                    <span className="font-bold tabular-nums text-rose-700">
+                    <span className="font-display text-xl tabular-nums text-rose-700">
                       4
                     </span>
                     <DecisionPill decision="decline" />
@@ -258,13 +252,13 @@ export function HeroQueueDemo() {
             {EARLIER.map((a) => (
               <li
                 key={a.handle}
-                className="flex items-center justify-between gap-3 border-l-8 border-l-transparent px-4 py-3"
+                className="flex items-center justify-between gap-3 border-l-4 border-l-transparent px-4 py-3"
               >
                 <div className="min-w-0">
-                  <div className="font-mono text-[15px] font-semibold text-slate-800">
+                  <div className="font-mono text-[15px] text-foreground/85">
                     {a.handle}
                   </div>
-                  <div className="mt-1 flex items-center gap-2 text-[14px] text-slate-600">
+                  <div className="mt-1 flex items-center gap-2 text-[14px] text-muted-foreground">
                     <ChannelBadge channel={a.channel} />
                     <span className="truncate">{a.name}</span>
                   </div>
@@ -272,10 +266,10 @@ export function HeroQueueDemo() {
                 <div className="flex shrink-0 items-center gap-2">
                   <span
                     className={clsx(
-                      "font-bold tabular-nums",
+                      "font-display text-xl tabular-nums",
                       a.decision === "accept"
                         ? "text-emerald-700"
-                        : "text-amber-700",
+                        : "text-orange-700",
                     )}
                   >
                     {a.score}
@@ -287,9 +281,9 @@ export function HeroQueueDemo() {
           </ul>
 
           {/* Detail for the new arrival */}
-          <div className="space-y-4 border-t-2 border-slate-200 bg-slate-50/60 p-4">
+          <div className="space-y-4 border-t border-border bg-background/60 p-4">
             <Reveal on={step >= 2}>
-              <p className="text-[13px] font-bold uppercase tracking-wide text-slate-600">
+              <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                 Signals
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -313,9 +307,9 @@ export function HeroQueueDemo() {
 
             <Reveal
               on={step >= 5}
-              className="flex flex-wrap items-center justify-between gap-2 text-[15px] text-slate-700"
+              className="flex flex-wrap items-center justify-between gap-2 text-[15px] text-foreground/80"
             >
-              <span className="font-semibold">Waiting for a lead</span>
+              <span className="font-medium text-foreground">Waiting for a lead</span>
               <span className="flex items-center gap-1.5">
                 Press <Kbd>D</Kbd> to send the decline
               </span>
@@ -324,7 +318,7 @@ export function HeroQueueDemo() {
         </div>
       </figure>
 
-      <div className="mt-3 flex items-center justify-between gap-3 text-[14px] text-slate-600">
+      <div className="mt-3 flex items-center justify-between gap-3 rounded-full bg-card/85 px-4 py-1.5 text-[13px] text-muted-foreground backdrop-blur">
         <span>
           Fictional applicant. No real phone number is shown or stored.
         </span>
@@ -333,7 +327,7 @@ export function HeroQueueDemo() {
           onClick={replay}
           disabled={reduced}
           className={clsx(
-            "inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 disabled:hidden",
+            "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 font-medium text-foreground/80 hover:bg-muted hover:text-foreground disabled:hidden",
             focusRing,
           )}
         >
