@@ -13,7 +13,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { handle } = body;
 
-  const isBlocklisted = handle === "@cryptomax_alpha1" || handle === "@best_deals_4u";
+  const normalized = String(handle ?? "")
+    .trim()
+    .replace(/^@/, "")
+    .toLowerCase();
+  const isBlocklisted =
+    normalized === "cryptomax_alpha1" || normalized === "best_deals_4u";
 
   if (isBlocklisted) {
     return NextResponse.json({

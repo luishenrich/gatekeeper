@@ -1,0 +1,157 @@
+[
+  {
+    "id": "A13",
+    "community_id": "c1",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Mina Vaguely",
+    "handle": "@mina_v",
+    "phone": "+44 7700 900201",
+    "email": "mina.vaguely@example.com",
+    "github": null,
+    "text": "I'm really interested in AI and want to learn more. I've been following lots of newsletters.",
+    "decision": "ask",
+    "score": 55,
+    "reason": "Genuine-sounding but no building activity; ask what she is working on (rule 2).",
+    "final": false,
+    "signals": {
+      "rules_fit": { "score": 55, "rule_refs": ["london-agent-builders#2"] },
+      "spam_text": { "score": 0, "matched_patterns": [] },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": false
+    }
+  },
+  {
+    "id": "A14",
+    "community_id": "c1",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Nico Sellsome",
+    "handle": "@nico_sells",
+    "phone": "+44 7700 900202",
+    "email": "nico.sellsome@example.com",
+    "github": null,
+    "text": "Account executive at a fictional AI tooling vendor. I'd love to meet builders and understand their needs.",
+    "decision": "ask",
+    "score": 60,
+    "reason": "Sales role; may be fine but rule 4 forbids pitching — ask intent and remind of no-pitch rule.",
+    "final": false,
+    "signals": {
+      "rules_fit": { "score": 60, "rule_refs": ["london-agent-builders#4"] },
+      "spam_text": { "score": 0.1, "matched_patterns": [] },
+      "stopforumspam": { "appears": false, "frequency": 0, "confidence": 0 },
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": false
+    }
+  },
+  {
+    "id": "A21",
+    "community_id": "c1",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Max Moonshot",
+    "handle": "@cryptomax_alpha",
+    "phone": "+44 7700 900901",
+    "email": "max.moonshot@example.com",
+    "github": null,
+    "text": "Join my VIP signals group, 10x guaranteed on new AI token presale!! DM me now, limited spots, link in bio.",
+    "decision": "decline",
+    "score": 5,
+    "reason": "Crypto pump, guaranteed returns, urgency, DM lure (rule 5).",
+    "final": false,
+    "signals": {
+      "rules_fit": { "score": 5, "rule_refs": ["london-agent-builders#5"] },
+      "spam_text": {
+        "score": 0.95,
+        "matched_patterns": ["guaranteed_returns", "urgency", "dm_lure", "crypto"]
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": false
+    }
+  },
+  {
+    "id": "A15",
+    "community_id": "c1",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Ollie Quiet",
+    "handle": "@ollie_q",
+    "phone": "+44 7700 900203",
+    "email": "ollie.quiet@example.com",
+    "github": "ollie-quiet-demo",
+    "text": "I ship small tools. Happy to lurk and help newcomers.",
+    "decision": "ask",
+    "score": 62,
+    "reason": "Light on specifics; ask for a link to something shipped (rule 2).",
+    "final": false,
+    "signals": {
+      "rules_fit": { "score": 62, "rule_refs": ["london-agent-builders#2"] },
+      "spam_text": { "score": 0, "matched_patterns": [] },
+      "stopforumspam": null,
+      "github": { "exists": true, "account_age_days": 90, "public_repos": 2 },
+      "devpost": { "projects_found": 0 },
+      "blocklist_hit": false
+    }
+  },
+  {
+    "id": "A22",
+    "community_id": "c2",
+    "community_slug": "south-london-hack-nights",
+    "community_name": "South London Hack Nights",
+    "name": "Max Moonshot",
+    "handle": "@cryptomax_alpha1",
+    "phone": "+44 7700 900901",
+    "email": "max.moonshot.vip@example.com",
+    "github": null,
+    "text": "Hello builders! Exclusive AI token presale, 10x guaranteed, message me for whitelist spot before it closes.",
+    "decision": "decline",
+    "score": 10,
+    "reason": "Matched shared blocklist on phone, handle (confirmed in london-agent-builders). Handle variation; crypto pump.",
+    "final": false,
+    "signals": {
+      "rules_fit": { "score": 10, "rule_refs": ["south-london-hack-nights#4"] },
+      "spam_text": {
+        "score": 0.92,
+        "matched_patterns": ["guaranteed_returns", "urgency", "crypto"]
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": true
+    },
+    "blocklist_match": {
+      "matched_on": ["phone", "handle"],
+      "status": "confirmed",
+      "reported_at": "2026-10-22T18:00:00Z"
+    }
+  },
+  {
+    "id": "A16",
+    "community_id": "c2",
+    "community_slug": "south-london-hack-nights",
+    "community_name": "South London Hack Nights",
+    "name": "Pip Unclear",
+    "handle": "@pip_u",
+    "phone": "+44 7700 900204",
+    "email": "pip.unclear@example.com",
+    "github": null,
+    "text": "Looking to network and maybe start something in AI.",
+    "decision": "ask",
+    "score": 48,
+    "reason": "Vague intent; ask what they want to build at a hack night (rule 2).",
+    "final": false,
+    "signals": {
+      "rules_fit": { "score": 48, "rule_refs": ["south-london-hack-nights#2"] },
+      "spam_text": { "score": 0, "matched_patterns": [] },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": false
+    }
+  }
+]
