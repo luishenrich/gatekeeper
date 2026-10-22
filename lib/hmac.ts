@@ -33,6 +33,26 @@ export function hashPhone(phone: string): string {
   return hmac(normalizePhone(phone));
 }
 
+/** Display form like `+44 7700 ***123`. */
+export function maskPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  const last3 = digits.slice(-3) || "•••";
+  if (digits.startsWith("44") && digits.length > 6) {
+    return `+44 ${digits.slice(2, 6)} ***${last3}`;
+  }
+  const cc = digits.slice(0, Math.min(2, digits.length));
+  return `+${cc} ***${last3}`;
+}
+
+/** HMAC when the secret is set, otherwise a masked number. */
+export function auditPhone(phone: string): string {
+  try {
+    return hashPhone(phone);
+  } catch {
+    return maskPhone(phone);
+  }
+}
+
 export function hashEmail(email: string): string {
   return hmac(normalizeEmail(email));
 }

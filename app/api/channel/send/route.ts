@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase/server";
 import { WhatsAppAdapter } from "@/lib/channels/whatsapp";
 import { checkQueueAuth } from "@/lib/auth/queue-admin";
+import { auditPhone } from "@/lib/hmac";
 
 const NEUTRAL_FALLBACK =
   "Thanks for applying. A community lead will follow up if needed.";
@@ -68,11 +69,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Unsupported channel: ${channel}` }, { status: 400 });
     }
 
+    const phoneLike = channel === "whatsapp" || /^\+?\d[\d\s-]{6,}$/.test(to);
+    const recipient = phoneLike
+      ? auditPhone(to.startsWith("+") ? to : `+${to.replace(/\D/g, "")}`)
+      : to;
+
     await getServiceClient().from("audit_log").insert({
       community_id: application.community_id,
       actor: "moderator",
       action: "channel_send",
-      details: { application_id, channel, to, text: message, sent_at },
+      details: { application_id, channel, to: recipient, text: message, sent_at },
     } as any);
 
     return NextResponse.json({ ok: true, channel, sent_at });
