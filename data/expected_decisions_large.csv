@@ -1,0 +1,201 @@
+id,expected_decision,reason
+L001,accept,"Concrete AI/agent project described, London (Clapham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L002,accept,"Concrete AI/agent project described, London (Peckham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L003,accept,"Concrete AI/agent project described, London (Croydon), offers to share/demo; no pitch (rules 1, 2, 3)."
+L004,accept,"Concrete AI/agent project described, London (Islington), offers to share/demo; no pitch (rules 1, 2, 3)."
+L005,accept,"Concrete AI/agent project described, London (Tottenham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L006,accept,"Concrete AI/agent project described, London (Hammersmith), offers to share/demo; no pitch (rules 1, 2, 3)."
+L007,accept,"Concrete AI/agent project described, London (Croydon), offers to share/demo; no pitch (rules 1, 2, 3)."
+L008,accept,"Concrete AI/agent project described, London (Tottenham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L009,accept,"Concrete AI/agent project described, London (Battersea), offers to share/demo; no pitch (rules 1, 2, 3)."
+L010,accept,"Concrete AI/agent project described, London (Hammersmith), offers to share/demo; no pitch (rules 1, 2, 3)."
+L011,accept,"Concrete AI/agent project described, London (Kentish Town), offers to share/demo; no pitch (rules 1, 2, 3)."
+L012,accept,"Concrete AI/agent project described, London (Walthamstow), offers to share/demo; no pitch (rules 1, 2, 3)."
+L013,accept,"Concrete AI/agent project described, London (Tottenham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L014,accept,"Concrete AI/agent project described, London (Finsbury Park), offers to share/demo; no pitch (rules 1, 2, 3)."
+L015,accept,"Concrete AI/agent project described, London (Greenwich), offers to share/demo; no pitch (rules 1, 2, 3)."
+L016,accept,"Concrete AI/agent project described, London (Stoke Newington), offers to share/demo; no pitch (rules 1, 2, 3)."
+L017,accept,"Concrete AI/agent project described, London (Battersea), offers to share/demo; no pitch (rules 1, 2, 3)."
+L018,accept,"Concrete AI/agent project described, London (Wimbledon), offers to share/demo; no pitch (rules 1, 2, 3)."
+L019,accept,"Concrete AI/agent project described, London (Lewisham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L020,accept,"Concrete AI/agent project described, London (Bermondsey), offers to share/demo; no pitch (rules 1, 2, 3)."
+L021,accept,"Concrete AI/agent project described, London (Hackney), offers to share/demo; no pitch (rules 1, 2, 3)."
+L022,accept,"Concrete AI/agent project described, London (Walthamstow), offers to share/demo; no pitch (rules 1, 2, 3)."
+L023,accept,"Concrete AI/agent project described, London (Greenwich), offers to share/demo; no pitch (rules 1, 2, 3)."
+L024,accept,"Concrete AI/agent project described, London (Croydon), offers to share/demo; no pitch (rules 1, 2, 3)."
+L025,accept,"Concrete AI/agent project described, London (Brixton), offers to share/demo; no pitch (rules 1, 2, 3)."
+L026,accept,"Concrete AI/agent project described, London (Stratford), offers to share/demo; no pitch (rules 1, 2, 3)."
+L027,accept,"Concrete AI/agent project described, London (Walthamstow), offers to share/demo; no pitch (rules 1, 2, 3)."
+L028,accept,"Concrete AI/agent project described, London (Bethnal Green), offers to share/demo; no pitch (rules 1, 2, 3)."
+L029,accept,"Concrete AI/agent project described, London (Battersea), offers to share/demo; no pitch (rules 1, 2, 3)."
+L030,accept,"Concrete AI/agent project described, London (Finsbury Park), offers to share/demo; no pitch (rules 1, 2, 3)."
+L031,accept,"Concrete AI/agent project described, London (Camden), offers to share/demo; no pitch (rules 1, 2, 3)."
+L032,accept,"Concrete AI/agent project described, London (Peckham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L033,accept,"Concrete AI/agent project described, London (Greenwich), offers to share/demo; no pitch (rules 1, 2, 3)."
+L034,accept,"Concrete AI/agent project described, London (Clapham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L035,accept,"Concrete AI/agent project described, London (Shoreditch), offers to share/demo; no pitch (rules 1, 2, 3)."
+L036,accept,"Concrete AI/agent project described, London (Bethnal Green), offers to share/demo; no pitch (rules 1, 2, 3)."
+L037,accept,"Concrete AI/agent project described, London (Islington), offers to share/demo; no pitch (rules 1, 2, 3)."
+L038,accept,"Concrete AI/agent project described, London (Bethnal Green), offers to share/demo; no pitch (rules 1, 2, 3)."
+L039,accept,"Concrete AI/agent project described, London (Clapham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L040,accept,"Concrete AI/agent project described, London (King's Cross), offers to share/demo; no pitch (rules 1, 2, 3)."
+L041,accept,"Concrete AI/agent project described, London (Bethnal Green), offers to share/demo; no pitch (rules 1, 2, 3)."
+L042,accept,"Concrete AI/agent project described, London (Stratford), offers to share/demo; no pitch (rules 1, 2, 3)."
+L043,accept,"Concrete AI/agent project described, London (Hackney), offers to share/demo; no pitch (rules 1, 2, 3)."
+L044,accept,"Concrete AI/agent project described, London (Brixton), offers to share/demo; no pitch (rules 1, 2, 3)."
+L045,accept,"Concrete AI/agent project described, London (Deptford), offers to share/demo; no pitch (rules 1, 2, 3)."
+L046,accept,"Concrete AI/agent project described, London (King's Cross), offers to share/demo; no pitch (rules 1, 2, 3)."
+L047,accept,"Concrete AI/agent project described, London (Islington), offers to share/demo; no pitch (rules 1, 2, 3)."
+L048,accept,"Concrete AI/agent project described, London (Croydon), offers to share/demo; no pitch (rules 1, 2, 3)."
+L049,accept,"Concrete AI/agent project described, London (Camden), offers to share/demo; no pitch (rules 1, 2, 3)."
+L050,accept,"Concrete AI/agent project described, London (Battersea), offers to share/demo; no pitch (rules 1, 2, 3)."
+L051,accept,"Concrete AI/agent project described, London (Islington), offers to share/demo; no pitch (rules 1, 2, 3)."
+L052,accept,"Concrete AI/agent project described, London (Croydon), offers to share/demo; no pitch (rules 1, 2, 3)."
+L053,accept,"Concrete AI/agent project described, London (Shoreditch), offers to share/demo; no pitch (rules 1, 2, 3)."
+L054,accept,"Concrete AI/agent project described, London (Clapham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L055,accept,"Concrete AI/agent project described, London (Hammersmith), offers to share/demo; no pitch (rules 1, 2, 3)."
+L056,accept,"Concrete AI/agent project described, London (Brixton), offers to share/demo; no pitch (rules 1, 2, 3)."
+L057,accept,"Concrete AI/agent project described, London (Tottenham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L058,accept,"Concrete AI/agent project described, London (Battersea), offers to share/demo; no pitch (rules 1, 2, 3)."
+L059,accept,"Concrete AI/agent project described, London (Kentish Town), offers to share/demo; no pitch (rules 1, 2, 3)."
+L060,accept,"Concrete AI/agent project described, London (Wimbledon), offers to share/demo; no pitch (rules 1, 2, 3)."
+L061,accept,"Concrete AI/agent project described, London (Tottenham), offers to share/demo; no pitch (rules 1, 2, 3)."
+L062,accept,"Concrete AI/agent project described, London (Hackney), offers to share/demo; no pitch (rules 1, 2, 3)."
+L063,accept,"Concrete AI/agent project described, London (Ealing), offers to share/demo; no pitch (rules 1, 2, 3)."
+L064,accept,"Concrete AI/agent project described, London (Battersea), offers to share/demo; no pitch (rules 1, 2, 3)."
+L065,accept,"Concrete AI/agent project described, London (Camden), offers to share/demo; no pitch (rules 1, 2, 3)."
+L066,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L067,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L068,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L069,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L070,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L071,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L072,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L073,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L074,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L075,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L076,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L077,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L078,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L079,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L080,accept,"Organises a named London tech community and answers the screening question with size (community 2 rules 1, 2)."
+L081,ask,Plausible human but no specifics about what they build (rule 2) — ask what they're working on.
+L082,ask,Buzzwords without any concrete project (rule 2) — ask.
+L083,ask,London but not yet building (rule 1) — ask what they want to build/learn.
+L084,ask,Sales role (rule 4) — ask to confirm no cold DMs/pitching.
+L085,ask,Recruiter (rule 4) — ask to confirm jobs only in #jobs.
+L086,ask,Investor (rule 4) — ask to confirm no deal-sourcing DMs.
+L087,ask,Strong builder but remote/outside London (rule 3) — ask about attendance.
+L088,ask,Builder but not London-based (rule 3) — ask.
+L089,ask,"Beginner; building is very early, no link (rules 1-2) — ask for what they've made."
+L090,ask,Not yet building with AI (rule 1) — ask.
+L091,ask,Possible sales/business-development intent (rule 4) — ask to confirm participation not pitching.
+L092,ask,"Content creator; unclear if they build and may solicit members (rules 1, 4) — ask."
+L093,ask,No information at all (rules 1-2) — ask.
+L094,ask,No information on building or location (rules 1-3) — ask.
+L095,ask,Marketing/promo intent (rule 4: promo only in #show-and-tell with demo) — ask.
+L096,ask,"Builder, off-location (rule 3) — ask about attendance."
+L097,ask,Builder not yet London-based (rule 3) — ask.
+L098,ask,Recruiting/VC role (rule 4) — ask.
+L099,ask,Not building (rule 1) — ask what they'd like to learn/contribute.
+L100,ask,Sales role (rule 4) — ask to confirm no cold DMs.
+L101,ask,London but no specifics (rule 2) — ask.
+L102,ask,No specifics about what they build (rule 2) — ask for whatever they can share.
+L103,ask,Remote-only (rule 3) and vague work — ask.
+L104,ask,Business-development/recruiting angle (rule 4) — ask.
+L105,ask,"London, adjacent to building; unclear if they build with AI (rule 1) — ask."
+L106,ask,No building activity (rule 1) — ask.
+L107,ask,No screening answer (community 2 rule 2) — ask which community they run.
+L108,ask,Doesn't say which community they run (community 2 rules 1-2) — ask.
+L109,ask,Paid course promo (community 2 rule 3) and no community named — ask.
+L110,ask,Not clear it's a London community; no name/size (community 2 rules 1-2) — ask.
+L111,ask,"Sponsor, not an organiser (community 2 rule 1) — ask."
+L112,ask,Not yet organising in London (community 2 rule 1) — ask.
+L113,ask,"Venue host, not organiser (community 2 rule 1) — ask."
+L114,ask,Attends but doesn't organise (community 2 rule 1) — ask.
+L115,ask,Product promotion (community 2 rule 3) — ask to keep promo to the weekly thread.
+L116,ask,"Organiser with screening answer, but crypto topic warrants a quick check against zero-tolerance rule (rule 4) — ask."
+L117,ask,"No community name, location or size (community 2 rules 1-2) — ask."
+L118,ask,"Recruiter, not organiser (community 2 rule 1) — ask."
+L119,ask,Builder but remote (rule 3) — ask.
+L120,ask,"Builds, but sales role (rule 4) — ask to confirm no pitching."
+L121,ask,Investor role (rule 4) — ask to confirm intent.
+L122,ask,Outside London (rule 3) — ask.
+L123,ask,"Some building but vague and possible solicitation (rules 2, 4) — ask."
+L124,ask,No specifics or location (rules 1-3) — ask.
+L125,ask,Recruiting intent (rule 4) — ask.
+L126,ask,"Not a builder; press presence needs confirmation (rules 1, 4) — ask."
+L127,ask,"Builder, not London (rule 3) — ask."
+L128,ask,"London, not yet building (rule 1) — ask."
+L129,ask,"Configures a vendor tool, unclear if builds (rules 1-2) — ask."
+L130,ask,"Temporarily in London, early-stage builder (rules 1, 3) — ask."
+L131,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L132,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L133,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L134,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L135,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L136,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L137,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L138,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L139,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L140,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L141,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L142,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L143,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L144,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L145,decline,Prize/claim scam text with premium-rate call/URL lure — phishing (rule 5).
+L146,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L147,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L148,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L149,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L150,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L151,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L152,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L153,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L154,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L155,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L156,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L157,decline,Investment/'earn fast' or money-mule lure typical of Telegram scam spam (rule 5: guaranteed returns / fraud).
+L158,decline,Guaranteed crypto/AI-bot returns (rule 5).
+L159,decline,Forex 'guaranteed' income lure (rule 5).
+L160,decline,Crypto pump with urgency (rule 5).
+L161,decline,Fake recruiter asking for ID/bank details (rule 5).
+L162,decline,Fake recruiter / credential phishing (rule 5).
+L163,decline,Link spam with URL shorteners (rule 5).
+L164,decline,Multiple shortened links in application (rule 5).
+L165,decline,Impersonates admins + phishing link (rule 5).
+L166,decline,Admin impersonation + credential phishing (rule 5).
+L167,decline,Phishing for card details (rule 5).
+L168,decline,Guaranteed-return investment scam (rule 5).
+L169,decline,Money-mule recruitment (rule 5: fraud).
+L170,decline,Crypto guaranteed returns + off-platform lure (rule 5).
+L171,decline,Impersonation + phishing for 2FA (rule 5).
+L172,decline,Advance-fee fake job (rule 5).
+L173,decline,Link shortener + spam service (rule 5).
+L174,decline,Fake recruiter harvesting ID/bank details (rule 5).
+L175,decline,Guaranteed returns + shortened link (rule 5).
+L176,decline,Admin impersonation / payment fraud (rule 5).
+L177,decline,Recovery scam / advance fee (rule 5).
+L178,decline,Prize lure + URL shortener (rule 5).
+L179,decline,Advance-fee loan scam (rule 5).
+L180,decline,Fraudulent account trading (rule 5).
+L181,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L182,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L183,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L184,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L185,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L186,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L187,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L188,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L189,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L190,decline,Copy-paste / bot-generated or templated text with no substance (rule 5).
+L191,decline,"Same phone as L131 (declined in community 1, on shared blocklist), handle variant @niko838x; same rule-5 scam text (community 2 rule 4)."
+L192,decline,"Same phone as L132 (declined in community 1, on shared blocklist), handle variant @yusra.860; same rule-5 scam text (community 2 rule 4)."
+L193,decline,"Same phone as L136 (declined in community 1, on shared blocklist), handle variant @mirela469x; same rule-5 scam text (community 2 rule 4)."
+L194,decline,"Same phone as L137 (declined in community 1, on shared blocklist), handle variant @wren_6461; same rule-5 scam text (community 2 rule 4)."
+L195,decline,"Same phone as L138 (declined in community 1, on shared blocklist), handle variant @quentin.666; same rule-5 scam text (community 2 rule 4)."
+L196,decline,"Same phone as L139 (declined in community 1, on shared blocklist), handle variant @lysander_602_uk; same rule-5 scam text (community 2 rule 4)."
+L197,decline,"Same phone as L141 (declined in community 1, on shared blocklist), handle variant @leocadia_1521; same rule-5 scam text (community 2 rule 4)."
+L198,decline,"Same phone as L142 (declined in community 1, on shared blocklist), handle variant @gulnar510x; same rule-5 scam text (community 2 rule 4)."
+L199,decline,"Same phone as L144 (declined in community 1, on shared blocklist), handle variant @greta_4111; same rule-5 scam text (community 2 rule 4)."
+L200,decline,"Same phone as L145 (declined in community 1, on shared blocklist), handle variant @kemi671x; same rule-5 scam text (community 2 rule 4)."

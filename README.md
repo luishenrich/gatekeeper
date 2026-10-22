@@ -344,7 +344,16 @@ The scorer has been tested with multiple models. For production:
 - Very fast (~800ms)
 - Good for high-volume communities
 
-Set via `SCORER_MODEL` environment variable.
+Set via `SCORER_MODEL` environment variable. The code default is `typesafe/jev-router`.
+
+## Datasets and attribution
+
+The 30-applicant demo set is fictional. The 200-applicant eval set adds scrubbed spam texts to fictional applications:
+
+- UCI SMS Spam Collection, CC BY 4.0, Almeida & Hidalgo (2011), https://doi.org/10.24432/C5CC84 (15 scrubbed texts used).
+- thehamkercat/telegram-spam-ham, WTFPL (12 texts used).
+
+All identities are fictional (Ofcom drama numbers, example.com). Sources, licences, and class counts are in [data/DATASETS.md](data/DATASETS.md).
 
 ## License
 
