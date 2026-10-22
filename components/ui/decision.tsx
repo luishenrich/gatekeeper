@@ -25,7 +25,7 @@ export function DecisionPill({ decision, size = "sm", className }: { decision: D
   const Icon = DECISION_ICON[decision];
   const sizes = {
     sm: "gap-1 rounded-full px-2.5 py-0.5 text-[12px] [&_svg]:h-3.5 [&_svg]:w-3.5",
-    md: "gap-1.5 rounded-full px-3 py-1 text-[14px] [&_svg]:h-4 [&_svg]:w-4",
+    md: "gap-2 rounded-full px-4 py-1.5 text-[15px] [&_svg]:h-4 [&_svg]:w-4",
     xl: "gap-2.5 rounded-full px-5 py-2.5 text-2xl [&_svg]:h-6 [&_svg]:w-6",
   };
   return (
@@ -42,16 +42,32 @@ export function scoreBand(score: number): { label: string; className: string } {
   return { label: "Weak", className: "text-rose-700" };
 }
 
+const BAND_BAR = { Strong: "bg-emerald-500", Mixed: "bg-amber-400", Weak: "bg-rose-400" } as const;
+const BAND_PILL = {
+  Strong: "bg-emerald-50 text-emerald-800 ring-emerald-200",
+  Mixed: "bg-amber-50 text-amber-800 ring-amber-200",
+  Weak: "bg-rose-50 text-rose-800 ring-rose-200",
+} as const;
+
 export function ScoreBadge({ score, size = "sm" }: { score: number | null | undefined; size?: "sm" | "xl" }) {
   if (score === null || score === undefined || Number.isNaN(score)) {
     return <span className="font-semibold text-muted-foreground">—</span>;
   }
   const band = scoreBand(score);
   if (size === "xl") {
+    const label = band.label as keyof typeof BAND_BAR;
     return (
-      <div className="flex items-baseline gap-1" aria-label={`Score ${score} out of 100`}>
-        <span className={clsx("font-display text-7xl leading-none tabular-nums", band.className)}>{score}</span>
-        <span className="text-lg text-muted-foreground">/100</span>
+      <div className="w-full min-w-[10rem] max-w-[14rem]" aria-label={`Score ${score} out of 100, ${label.toLowerCase()} fit`}>
+        <div className="flex items-baseline justify-between gap-3">
+          <div className="flex items-baseline gap-1">
+            <span className="font-display text-5xl leading-none tabular-nums text-foreground">{score}</span>
+            <span className="text-sm text-muted-foreground">/100</span>
+          </div>
+          <span className={clsx("rounded-full px-2.5 py-0.5 text-[12px] font-medium ring-1", BAND_PILL[label])}>{label} fit</span>
+        </div>
+        <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-foreground/10" aria-hidden>
+          <div className={clsx("h-full rounded-full", BAND_BAR[label])} style={{ width: `${Math.max(2, Math.min(100, score))}%` }} />
+        </div>
       </div>
     );
   }
