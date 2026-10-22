@@ -120,6 +120,7 @@ export async function scoreApplicationInternal(
       status: "confirmed",
       reported_at: match.created_at,
     };
+    signals.blocklist_match = blocklist_match;
 
     if (matched_on.length === 1 && matched_on[0] === "email") {
       decision = "ask";
