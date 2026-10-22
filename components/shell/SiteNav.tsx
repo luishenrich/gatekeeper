@@ -9,6 +9,7 @@ import { Logo } from "@/components/shell/Logo";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
+  { href: "/demo", label: "Live demo" },
   { href: "/#how", label: "How it works" },
   { href: "/apply", label: "Try it" },
   { href: "/eval", label: "Eval" },

@@ -125,9 +125,12 @@ export default function Home() {
             communities by hash, and puts the hard calls in a calm, keyboard-first queue. A lead approves every decline.
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/apply" className={cn(pill.base, pill.ink, "w-full sm:w-auto", focusRing)}>
-              Try it
+            <Link href="/demo" className={cn(pill.base, pill.ink, "w-full sm:w-auto", focusRing)}>
+              Watch the live demo
               <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link href="/apply" className={cn(pill.base, pill.outline, "w-full sm:w-auto", focusRing)}>
+              Try it
             </Link>
             <Link href="/login" className={cn(pill.base, pill.outline, "w-full sm:w-auto", focusRing)}>
               Lead sign in
