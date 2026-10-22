@@ -10,14 +10,14 @@ export function asDecision(value: string | null | undefined): Decision | null {
 
 export const DECISION_WORD: Record<Decision, string> = { accept: "Accept", ask: "Ask", decline: "Decline" };
 export const DECISION_SOLID: Record<Decision, string> = {
-  accept: "bg-emerald-600 text-white",
-  ask: "bg-amber-400 text-stone-950",
-  decline: "bg-rose-600 text-white",
+  accept: "bg-green-600 text-white",
+  ask: "bg-orange-500 text-white",
+  decline: "bg-red-600 text-white",
 };
 export const DECISION_SOFT: Record<Decision, string> = {
-  accept: "bg-emerald-50/70 border-emerald-200",
-  ask: "bg-amber-50/70 border-amber-200",
-  decline: "bg-rose-50/70 border-rose-200",
+  accept: "bg-green-50/70 border-green-200",
+  ask: "bg-orange-50/70 border-orange-200",
+  decline: "bg-red-50/70 border-red-200",
 };
 const DECISION_ICON = { accept: Check, ask: HelpCircle, decline: X } as const;
 
@@ -37,16 +37,16 @@ export function DecisionPill({ decision, size = "sm", className }: { decision: D
 }
 
 export function scoreBand(score: number): { label: string; className: string } {
-  if (score >= 80) return { label: "Strong", className: "text-emerald-700" };
-  if (score >= 50) return { label: "Mixed", className: "text-amber-700" };
-  return { label: "Weak", className: "text-rose-700" };
+  if (score >= 80) return { label: "Strong", className: "text-green-700" };
+  if (score >= 50) return { label: "Mixed", className: "text-orange-700" };
+  return { label: "Weak", className: "text-red-700" };
 }
 
-const BAND_BAR = { Strong: "bg-emerald-500", Mixed: "bg-amber-400", Weak: "bg-rose-400" } as const;
+const BAND_BAR = { Strong: "bg-green-500", Mixed: "bg-orange-500", Weak: "bg-red-400" } as const;
 const BAND_PILL = {
-  Strong: "bg-emerald-50 text-emerald-800 ring-emerald-200",
-  Mixed: "bg-amber-50 text-amber-800 ring-amber-200",
-  Weak: "bg-rose-50 text-rose-800 ring-rose-200",
+  Strong: "bg-green-50 text-green-800 ring-green-200",
+  Mixed: "bg-orange-50 text-orange-800 ring-orange-200",
+  Weak: "bg-red-50 text-red-800 ring-red-200",
 } as const;
 
 export function ScoreBadge({ score, size = "sm" }: { score: number | null | undefined; size?: "sm" | "xl" }) {
@@ -79,8 +79,8 @@ export function ScoreBadge({ score, size = "sm" }: { score: number | null | unde
 }
 
 const CHIP: Record<SignalStatus, { cls: string; Icon: typeof Check; word: string }> = {
-  pass: { cls: "bg-emerald-50/80 text-emerald-900 border-emerald-200", Icon: Check, word: "pass" },
-  fail: { cls: "bg-rose-50/80 text-rose-900 border-rose-200", Icon: X, word: "fail" },
+  pass: { cls: "bg-green-50/80 text-green-900 border-green-200", Icon: Check, word: "pass" },
+  fail: { cls: "bg-red-50/80 text-red-900 border-red-200", Icon: X, word: "fail" },
   unknown: { cls: "bg-muted text-foreground/80 border-border", Icon: HelpCircle, word: "unknown" },
 };
 
@@ -133,7 +133,7 @@ export function ChannelBadge({ channel }: { channel: string | null | undefined }
 
 export function BlocklistBadge({ className }: { className?: string }) {
   return (
-    <span className={clsx("inline-flex items-center gap-1 rounded-full bg-rose-600 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white", className)}>
+    <span className={clsx("inline-flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white", className)}>
       <Ban className="h-3.5 w-3.5" aria-hidden strokeWidth={3} />
       Blocklist
     </span>
@@ -154,19 +154,19 @@ export function BlocklistCallout({ match, className }: { match: BlocklistMatchUi
   const where = match.prior_community_name || "a partner community";
   const on = match.matched_on && match.matched_on.length > 0 ? match.matched_on.join(" + ") : "phone";
   return (
-    <div role="alert" className={clsx("rounded-2xl border border-rose-300 bg-[#FFF4F4] p-5", className)}>
+    <div role="alert" className={clsx("rounded-2xl border border-red-300 bg-red-50 p-5", className)}>
       <div className="flex items-start gap-3">
-        <ShieldAlert className="mt-0.5 h-6 w-6 shrink-0 text-rose-700" aria-hidden />
+        <ShieldAlert className="mt-0.5 h-6 w-6 shrink-0 text-red-700" aria-hidden />
         <div className="min-w-0">
-          <p className="text-[17px] font-semibold text-rose-950">
+          <p className="text-[17px] font-semibold text-red-950">
             Seen in {where}, same {on} hash
           </p>
-          <p className="mt-1 text-rose-900">
+          <p className="mt-1 text-red-900">
             {match.status === "pending" ? "Reported" : "Confirmed"} on the shared blocklist
             {match.evidence ? <> · {match.evidence}</> : null}
           </p>
           {match.hash_prefix ? (
-            <p className="mt-2 font-mono text-[15px] font-semibold text-rose-900">{match.hash_prefix}</p>
+            <p className="mt-2 font-mono text-[15px] font-semibold text-red-900">{match.hash_prefix}</p>
           ) : null}
         </div>
       </div>

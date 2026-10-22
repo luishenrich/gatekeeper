@@ -8,20 +8,20 @@ const serif = EB_Garamond({ subsets: ["latin"], variable: "--font-serif", displa
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Gatekeeper — Trust & safety for community builders", template: "Gatekeeper — %s" },
+  title: { default: "Greenlight — Trust & safety for community builders", template: "Greenlight — %s" },
   description:
     "Open-source application vetting for community leads: rule-aware scoring, a cross-community blocklist shared by hash, and a keyboard-first review queue.",
   icons: {
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231a1a1a'/%3E%3Cpath d='M16 6.5l7.5 2.8v5.6c0 4.8-3.2 8.6-7.5 10.6-4.3-2-7.5-5.8-7.5-10.6V9.3L16 6.5z' fill='%23F0D7FF'/%3E%3C/svg%3E",
+    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231a1a1a'/%3E%3Cpath d='M16 6.5l7.5 2.8v5.6c0 4.8-3.2 8.6-7.5 10.6-4.3-2-7.5-5.8-7.5-10.6V9.3L16 6.5z' fill='%2322C55E'/%3E%3C/svg%3E",
   },
   openGraph: {
-    title: "Gatekeeper",
+    title: "Greenlight",
     description: "Open-source trust & safety for community builders. MIT.",
     type: "website",
   },
 };
 
-export const viewport: Viewport = { themeColor: "#F9F8F0" };
+export const viewport: Viewport = { themeColor: "#ffffff" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

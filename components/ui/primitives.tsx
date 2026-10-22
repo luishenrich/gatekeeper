@@ -32,12 +32,12 @@ type ButtonSize = "sm" | "md" | "lg";
 
 const buttonVariants: Record<ButtonVariant, string> = {
   primary: "bg-foreground text-background hover:bg-foreground/85",
-  lilac: "bg-secondary text-secondary-foreground border border-foreground hover:bg-[#E8C6FF]",
+  lilac: "bg-card text-foreground border border-foreground hover:bg-accent",
   secondary: "bg-card text-foreground border border-border hover:bg-accent",
   ghost: "bg-transparent text-foreground/80 hover:bg-foreground/5 hover:text-foreground",
-  danger: "bg-rose-600 text-white hover:bg-rose-700",
-  accept: "bg-emerald-600 text-white hover:bg-emerald-700",
-  ask: "bg-amber-400 text-stone-950 hover:bg-amber-300",
+  danger: "bg-red-600 text-white hover:bg-red-700",
+  accept: "bg-green-600 text-white hover:bg-green-700",
+  ask: "bg-orange-500 text-white hover:bg-orange-600",
 };
 
 const buttonSizes: Record<ButtonSize, string> = {
@@ -118,7 +118,7 @@ function FieldShell({ id, label, hint, error, required, trailing, children }: Fi
 const controlClass = (error?: string | null) =>
   cn(
     "w-full rounded-xl border bg-card px-3.5 text-[15px] text-foreground shadow-[0_1px_0_rgba(0,0,0,0.02)] placeholder:text-muted-foreground/80 transition-colors duration-150 disabled:opacity-60",
-    "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-secondary focus-visible:border-foreground/40",
+    "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-foreground/10 focus-visible:border-foreground/50",
     error ? "border-rose-500" : "border-input hover:border-foreground/25"
   );
 
@@ -221,7 +221,7 @@ export function Skeleton({ className }: { className?: string }) {
 export function Avatar({ label, size = "md", className }: { label: string; size?: "sm" | "md" | "lg"; className?: string }) {
   const sizes = { sm: "h-8 w-8 text-[12px]", md: "h-10 w-10 text-[13px]", lg: "h-14 w-14 text-lg" };
   return (
-    <span aria-hidden className={cn("grid shrink-0 place-items-center rounded-full bg-secondary font-semibold text-foreground ring-1 ring-foreground/10", sizes[size], className)}>
+    <span aria-hidden className={cn("grid shrink-0 place-items-center rounded-full bg-foreground font-semibold text-background", sizes[size], className)}>
       {label}
     </span>
   );
@@ -254,14 +254,14 @@ export function StatCard({
   tone?: "neutral" | "accept" | "ask" | "decline" | "blocklist";
 }) {
   const dot = {
-    neutral: "bg-foreground/30",
-    accept: "bg-emerald-500",
-    ask: "bg-amber-400",
-    decline: "bg-rose-500",
-    blocklist: "bg-rose-600",
+    neutral: "bg-foreground/40",
+    accept: "bg-green-600",
+    ask: "bg-orange-500",
+    decline: "bg-red-600",
+    blocklist: "bg-red-600",
   } as const;
   return (
-    <Card className={cn("p-5", tone === "blocklist" && "bg-[#FFF4F4] border-rose-200")}>
+    <Card className={cn("p-5", tone === "blocklist" && "bg-red-50 border-red-200")}>
       <div className="flex items-center gap-2 text-[13px] font-medium text-muted-foreground [&_svg]:h-4 [&_svg]:w-4">
         <span className={cn("h-1.5 w-1.5 rounded-full", dot[tone])} aria-hidden />
         {icon}
@@ -278,7 +278,7 @@ export function StatCard({
 export function EmptyState({ icon, title, body, action, className }: { icon?: ReactNode; title: string; body?: ReactNode; action?: ReactNode; className?: string }) {
   return (
     <div className={cn("flex flex-col items-center justify-center px-6 py-16 text-center", className)}>
-      {icon ? <div className="mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-secondary text-foreground">{icon}</div> : null}
+      {icon ? <div className="mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-muted text-foreground">{icon}</div> : null}
       <h2 className="font-display text-3xl text-foreground">{title}</h2>
       {body ? <div className="mt-2 max-w-md text-muted-foreground">{body}</div> : null}
       {action ? <div className="mt-6">{action}</div> : null}
@@ -303,7 +303,7 @@ export function ErrorState({
 }) {
   const [open, setOpen] = useState(false);
   return (
-    <div role="alert" className={cn("rounded-2xl border border-rose-200 bg-[#FFF4F4] p-6", className)}>
+    <div role="alert" className={cn("rounded-2xl border border-red-200 bg-red-50 p-6", className)}>
       <div className="flex items-start gap-3">
         <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-rose-600" aria-hidden />
         <div className="min-w-0 flex-1">

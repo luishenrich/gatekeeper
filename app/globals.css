@@ -2,42 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Wispr Flow–inspired theme: warm cream paper, ink text, lilac accent, serif display. */
+/* Clean theme: white, black ink, serif display. Green/orange/red only carry meaning. */
 @layer base {
   :root {
-    --background: 60 45% 96%;          /* #F9F8F0 warm paper */
-    --foreground: 0 0% 10%;            /* #1A1A1A ink */
-    --card: 60 100% 99%;               /* #FFFFFB */
-    --card-foreground: 0 0% 10%;
-    --popover: 60 100% 99%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 0 0% 10%;               /* ink buttons */
-    --primary-foreground: 60 100% 96%;
-    --secondary: 277 100% 92%;         /* #F0D7FF lilac */
-    --secondary-foreground: 0 0% 10%;
-    --muted: 60 22% 91%;               /* #EDEDE3 */
-    --muted-foreground: 50 6% 34%;     /* #5C5A52 — AA on paper */
-    --accent: 60 26% 89%;              /* #E9E9DA */
-    --accent-foreground: 0 0% 10%;
-    --destructive: 350 75% 45%;
+    --background: 0 0% 100%;           /* white */
+    --foreground: 0 0% 7%;             /* #111 ink */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 0 0% 7%;                /* black buttons */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;             /* neutral grey surface */
+    --secondary-foreground: 0 0% 7%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 38%;      /* #616161 — AA on white */
+    --accent: 0 0% 95%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 0 72% 46%;
     --destructive-foreground: 0 0% 100%;
-    --border: 60 20% 84%;              /* #DCDCCB */
-    --input: 60 20% 80%;
-    --ring: 277 60% 60%;
+    --border: 0 0% 90%;
+    --input: 0 0% 86%;
+    --ring: 0 0% 7%;
     --radius: 0.875rem;
-    --chart-1: 277 70% 70%;
-    --chart-2: 152 50% 40%;
-    --chart-3: 38 90% 55%;
-    --chart-4: 350 70% 55%;
-    --chart-5: 0 0% 30%;
-    --sidebar-background: 60 35% 93%; /* #F2F1E6 */
-    --sidebar-foreground: 0 0% 18%;
-    --sidebar-primary: 0 0% 10%;
-    --sidebar-primary-foreground: 60 100% 96%;
-    --sidebar-accent: 60 20% 86%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 60 18% 84%;
-    --sidebar-ring: 277 60% 60%;
+    --chart-1: 142 64% 38%;
+    --chart-2: 0 72% 50%;
+    --chart-3: 28 92% 52%;
+    --chart-4: 0 0% 40%;
+    --chart-5: 0 0% 20%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 0 0% 7%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 93%;
+    --sidebar-accent-foreground: 0 0% 7%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 7%;
   }
 
   * {
@@ -50,8 +50,8 @@
     @apply bg-background font-sans text-[16px] text-foreground antialiased;
   }
   ::selection {
-    background: hsl(277 100% 88%);
-    color: hsl(0 0% 10%);
+    background: hsl(0 0% 7%);
+    color: hsl(0 0% 100%);
   }
   .font-display {
     font-family: var(--font-serif), Georgia, serif;
@@ -62,7 +62,7 @@
 
 @layer utilities {
   .gk-shimmer {
-    background-image: linear-gradient(90deg, hsl(60 22% 89%) 0%, hsl(60 30% 94%) 50%, hsl(60 22% 89%) 100%);
+    background-image: linear-gradient(90deg, hsl(0 0% 92%) 0%, hsl(0 0% 96%) 50%, hsl(0 0% 92%) 100%);
     background-size: 200% 100%;
     animation: gk-shimmer 1.4s ease-in-out infinite;
   }

@@ -13,10 +13,10 @@ export const metadata: Metadata = { title: "Review queue" };
 
 function QueueFallback() {
   return (
-    <div className="flex flex-col md:h-[calc(100dvh-66px)] md:overflow-hidden">
-      <div className="h-[70px] shrink-0 border-b-2 border-slate-200" />
+    <div className="flex flex-col bg-background md:h-[calc(100svh-1rem-3.5rem)] md:overflow-hidden">
+      <div className="h-[61px] shrink-0 border-b border-border" />
       <div className="flex flex-1 flex-col md:min-h-0 md:flex-row">
-        <div className="border-b-2 border-slate-200 md:w-2/5 md:border-b-0 md:border-r-2">
+        <div className="border-b border-border md:w-2/5 md:border-b-0 md:border-r">
           <QueueListSkeleton />
         </div>
         <div className="flex flex-col md:w-3/5">

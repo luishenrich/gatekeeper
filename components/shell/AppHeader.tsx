@@ -14,7 +14,7 @@ const TITLES: Record<string, string> = {
 
 export function AppHeader() {
   const pathname = usePathname();
-  const title = Object.entries(TITLES).find(([p]) => pathname.startsWith(p))?.[1] ?? "Gatekeeper";
+  const title = Object.entries(TITLES).find(([p]) => pathname.startsWith(p))?.[1] ?? "Greenlight";
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
       <SidebarTrigger className="-ml-1" />

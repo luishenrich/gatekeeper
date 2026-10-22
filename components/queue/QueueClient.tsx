@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { Ban, CheckCircle2, Filter, Keyboard, RotateCw } from "lucide-react";
+import { Ban, CheckCircle2, ChevronDown, Filter, Keyboard, RotateCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button, Dialog, ErrorState, Kbd, SegmentedControl, focusRing, toast, type Decision } from "@/components/ui";
@@ -434,13 +434,10 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
   const failed = !data && status === "error";
 
   return (
-    <div className="flex flex-col bg-white text-[17px] text-slate-900 md:h-[calc(100dvh-66px)] md:overflow-hidden">
-      {/* Top bar */}
-      <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 border-b-2 border-slate-200 px-4 py-3 sm:px-6">
-        <div className="mr-auto min-w-0 lg:mr-0">
-          <h1 className="text-xl font-bold tracking-tight">Review queue</h1>
-          <p className="truncate text-[15px] text-slate-600">{communityName(community)}</p>
-        </div>
+    <div className="flex flex-col bg-background text-[15px] text-foreground md:h-[calc(100svh-1rem-3.5rem)] md:overflow-hidden">
+      {/* Toolbar — the page title lives in the shell header */}
+      <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-3 border-b border-border px-4 py-3 sm:px-6">
+        <h1 className="sr-only">Review queue · {communityName(community)}</h1>
         <div className="-mx-1 max-w-full overflow-x-auto px-1 lg:mr-auto">
           <SegmentedControl<DecisionFilter>
             label="Filter by recommended decision"
@@ -448,21 +445,21 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
             onChange={setDecisionFilter}
             segments={[
               { value: "all", label: "All", count: counts.all },
-              { value: "decline", label: "Decline", count: counts.decline, className: "bg-rose-600 text-white" },
-              { value: "ask", label: "Ask", count: counts.ask, className: "bg-amber-500 text-slate-950" },
-              { value: "accept", label: "Accept", count: counts.accept, className: "bg-emerald-600 text-white" },
+              { value: "decline", label: "Decline", count: counts.decline, className: "bg-rose-100 text-rose-900" },
+              { value: "ask", label: "Ask", count: counts.ask, className: "bg-orange-100 text-orange-900" },
+              { value: "accept", label: "Accept", count: counts.accept, className: "bg-emerald-100 text-emerald-900" },
             ]}
           />
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <label className="relative inline-flex items-center">
             <span className="sr-only">Channel</span>
-            <Filter className="pointer-events-none absolute left-3 h-4 w-4 text-slate-600" aria-hidden />
+            <Filter className="pointer-events-none absolute left-3.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
             <select
               value={channelFilter}
               onChange={(e) => setChannelFilter(e.target.value as ChannelFilter)}
               className={clsx(
-                "h-11 appearance-none rounded-xl border-2 border-slate-200 bg-white pl-9 pr-4 text-[15px] font-semibold text-slate-900 hover:border-slate-300",
+                "h-9 appearance-none rounded-full border border-border bg-card pl-9 pr-8 text-[14px] font-medium text-foreground shadow-sm transition-colors hover:bg-accent",
                 focusRing
               )}
             >
@@ -471,25 +468,29 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
               <option value="discord">Discord</option>
               <option value="web">Web</option>
             </select>
+            <ChevronDown className="pointer-events-none absolute right-3 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
           </label>
           <button
             type="button"
             aria-pressed={blocklistOnly}
             onClick={() => setBlocklistOnly((v) => !v)}
             className={clsx(
-              "inline-flex h-11 items-center gap-2 rounded-xl border-2 px-3 text-[15px] font-semibold transition-colors duration-150",
+              "inline-flex h-9 items-center gap-2 rounded-full border px-3.5 text-[14px] font-medium shadow-sm transition-colors duration-150",
               focusRing,
-              blocklistOnly ? "border-rose-700 bg-rose-700 text-white" : "border-slate-200 bg-white text-slate-900 hover:border-slate-300"
+              blocklistOnly ? "border-rose-300 bg-rose-50 text-rose-900" : "border-border bg-card text-foreground hover:bg-accent"
             )}
           >
-            <Ban className="h-4 w-4" aria-hidden strokeWidth={2.5} />
+            <Ban className="h-3.5 w-3.5" aria-hidden strokeWidth={2.25} />
             Blocklist only
           </button>
           <button
             type="button"
             onClick={() => setHelpOpen(true)}
             aria-label="Keyboard shortcuts"
-            className={clsx("hidden h-11 items-center gap-2 rounded-xl border-2 border-slate-200 px-3 sm:inline-flex text-[15px] font-semibold text-slate-900 hover:border-slate-300", focusRing)}
+            className={clsx(
+              "hidden h-9 items-center gap-2 rounded-full px-3 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:inline-flex",
+              focusRing
+            )}
           >
             <Keyboard className="h-4 w-4" aria-hidden />
             <Kbd>?</Kbd>
@@ -511,18 +512,18 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
       ) : (
         <div className="flex flex-1 flex-col md:min-h-0 md:flex-row">
           {/* List */}
-          <div className="flex flex-col border-b-2 border-slate-200 md:min-h-0 md:w-2/5 md:border-b-0 md:border-r-2">
+          <div className="flex flex-col border-b border-border md:min-h-0 md:w-2/5 md:border-b-0 md:border-r">
             <div className="relative max-h-[42dvh] overflow-y-auto md:max-h-none md:flex-1" aria-busy={loading || undefined}>
               {loading ? (
                 <QueueListSkeleton />
               ) : visible.length === 0 ? (
-                <div className="px-6 py-12 text-center">
-                  <p className="text-lg font-bold text-slate-900">Nothing matches these filters</p>
-                  <p className="mt-1 text-slate-600">{allApps.length} waiting in total.</p>
+                <div className="px-6 py-14 text-center">
+                  <p className="font-display text-2xl">Nothing matches these filters</p>
+                  <p className="mt-1 text-muted-foreground">{allApps.length} waiting in total.</p>
                   <Button
                     variant="secondary"
                     size="sm"
-                    className="mt-4"
+                    className="mt-5"
                     onClick={() => {
                       setDecisionFilter("all");
                       setChannelFilter("all");
@@ -536,7 +537,7 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
                 <QueueList apps={visible} selectedId={selected?.id ?? null} newIds={newIds} onSelect={(id) => select(id, true)} />
               )}
             </div>
-            <div className="hidden shrink-0 flex-wrap items-center gap-x-2.5 gap-y-1 border-t-2 border-slate-200 bg-slate-50 px-5 py-2.5 text-[15px] text-slate-700 md:flex">
+            <div className="hidden shrink-0 flex-wrap items-center gap-x-2.5 gap-y-1 whitespace-nowrap border-t border-border px-4 py-2 text-[12px] text-muted-foreground md:flex">
               <span><Kbd>J</Kbd> <Kbd>K</Kbd> move</span>
               <span><Kbd>A</Kbd> <Kbd>S</Kbd> <Kbd>D</Kbd> decide</span>
               <span><Kbd>E</Kbd> edit</span>
@@ -559,14 +560,14 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
                 textareaRef={textareaRef}
               />
             ) : (
-              <div className="grid flex-1 place-items-center p-8 text-center text-slate-600">Select an application to review it.</div>
+              <div className="grid flex-1 place-items-center p-8 text-center text-muted-foreground">Select an application to review it.</div>
             )}
           </div>
         </div>
       )}
 
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} title="Keyboard shortcuts">
-        <dl className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2.5">
+        <dl className="grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 text-[15px]">
           {(
             [
               [["J", "K"], "Next / previous application"],
@@ -586,11 +587,11 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
                   <Kbd key={k}>{k}</Kbd>
                 ))}
               </dt>
-              <dd className="text-slate-800">{label}</dd>
+              <dd className="text-foreground/85">{label}</dd>
             </div>
           ))}
         </dl>
-        <p className="mt-4 text-[15px] text-slate-600">Single-key shortcuts are ignored while you type.</p>
+        <p className="mt-5 text-[14px] text-muted-foreground">Single-key shortcuts are ignored while you type.</p>
       </Dialog>
     </div>
   );
@@ -602,27 +603,31 @@ function QueueClear({ stats, onReload }: { stats: StatsResponse | null; onReload
   return (
     <div className="grid flex-1 place-items-center px-6 py-16 text-center">
       <div className="animate-gk-fade-in motion-reduce:animate-none">
-        <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-700" aria-hidden />
-        <h2 className="mt-4 text-5xl font-black tracking-tight text-emerald-700">Queue clear ✓</h2>
+        <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-50 ring-1 ring-emerald-200">
+          <CheckCircle2 className="h-8 w-8 text-emerald-700" aria-hidden strokeWidth={1.75} />
+        </span>
+        <h2 className="mt-6 font-display text-6xl leading-[0.95] tracking-tight">
+          Queue <em className="font-display italic">clear</em>
+        </h2>
         {stats && stats.handled_today > 0 ? (
-          <p className="mt-4 text-lg text-slate-700">
-            <strong className="text-slate-900">{stats.handled_today} handled today</strong>
+          <p className="mt-5 text-[16px] text-muted-foreground">
+            <strong className="font-medium text-foreground">{stats.handled_today} handled today</strong>
             {saved > 0 ? (
               <>
                 {" "}
-                · <strong className="text-slate-900" title="Estimate: 5 minutes per manual review">≈ {savedLabel} saved</strong>{" "}
-                <span className="text-slate-600">(estimate)</span>
+                · <strong className="font-medium text-foreground" title="Estimate: 5 minutes per manual review">≈ {savedLabel} saved</strong>{" "}
+                <span>(estimate)</span>
               </>
             ) : null}
           </p>
         ) : (
-          <p className="mt-4 text-lg text-slate-700">Nothing is waiting for a lead right now.</p>
+          <p className="mt-5 text-[16px] text-muted-foreground">Nothing is waiting for a lead right now.</p>
         )}
-        <div className="mt-6 flex items-center justify-center gap-3 text-slate-600">
+        <div className="mt-8 flex items-center justify-center gap-3 text-muted-foreground">
           <Button variant="secondary" onClick={onReload} icon={<RotateCw className="h-4 w-4" aria-hidden />}>
             Reload
           </Button>
-          <span className="inline-flex items-center gap-1 text-[15px]">
+          <span className="inline-flex items-center gap-1 text-[14px]">
             or press <Kbd>R</Kbd>
           </span>
         </div>

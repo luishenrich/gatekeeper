@@ -41,7 +41,7 @@ export default {
   			},
   			'gk-highlight': {
   				'0%': {
-  					backgroundColor: 'hsl(277 100% 92%)'
+  					backgroundColor: 'hsl(142 70% 94%)'
   				},
   				'100%': {
   					backgroundColor: 'transparent'

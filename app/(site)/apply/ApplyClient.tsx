@@ -25,6 +25,7 @@ import { ApiError, apiFetch } from "@/lib/ui/useApi";
 import { COMMUNITIES, DEFAULT_COMMUNITY, communityName } from "@/lib/ui/communities";
 import { buildSignalsFromApi, parseRuleNumber, ruleText } from "@/lib/signals-ui";
 import applicantFixtures from "@/fixtures/applicants.json";
+import { LogoMark } from "@/components/shell/Logo";
 
 /* ---------- Types ---------- */
 
@@ -237,15 +238,18 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
   const textLen = form.text.length;
   const locked = pending;
 
+
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-      <div className="pb-8">
-        <div className="mb-2 flex items-center gap-2 text-[15px] font-semibold text-slate-600">
+    <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
+      <div className="pb-10">
+        <div className="mb-4 flex items-center gap-2 text-[13px] font-medium uppercase tracking-wider text-muted-foreground">
           <ShieldCheck className="h-4 w-4" aria-hidden />
           Public application · no account needed
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Apply to join</h1>
-        <p className="mt-2 max-w-2xl text-lg text-slate-600">
+        <h1 className="font-display text-5xl leading-[1.02] tracking-tight text-foreground sm:text-6xl">
+          Apply to <em className="font-display italic">join</em>
+        </h1>
+        <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
           Tell the community who you are and what you&apos;re building. Every application is checked against the
           community&apos;s rules before a human lead decides.
         </p>
@@ -258,161 +262,165 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
             Application form
           </h2>
 
-          <div className="mb-6 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-4">
-            <div className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-slate-700">
-              <FlaskConical className="h-4 w-4" aria-hidden />
-              Demo helper
-            </div>
-            <p className="mt-1 text-[15px] text-slate-600">Prefill the form with a fictional test applicant.</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                disabled={locked || !SCAMMER}
-                onClick={() => prefill(SCAMMER, "south-london-hack-nights")}
-                icon={<Skull className="h-4 w-4 text-rose-700" aria-hidden />}
-                className="border-rose-300 hover:border-rose-500 hover:bg-rose-50"
-              >
-                Try a known scammer
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                disabled={locked || !STRONG}
-                onClick={() => prefill(STRONG, "london-agent-builders")}
-                icon={<Sparkles className="h-4 w-4 text-emerald-700" aria-hidden />}
-                className="border-emerald-300 hover:border-emerald-500 hover:bg-emerald-50"
-              >
-                Try a strong applicant
-              </Button>
-            </div>
-          </div>
-
-          <form
-            noValidate
-            onSubmit={(e) => {
-              e.preventDefault();
-              void submit();
-            }}
-            className="space-y-5"
-          >
-            <fieldset disabled={locked} className="space-y-5 disabled:opacity-80">
-              <Select
-                label="Community"
-                required
-                value={form.community_slug}
-                onChange={(e) => setField("community_slug", e.target.value)}
-              >
-                {COMMUNITIES.map((c) => (
-                  <option key={c.slug} value={c.slug}>
-                    {c.name}
-                  </option>
-                ))}
-              </Select>
-
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Input
-                  ref={(el) => {
-                    fieldRefs.current.name = el;
-                  }}
-                  label="Name"
-                  required
-                  autoComplete="name"
-                  value={form.name}
-                  error={errors.name}
-                  onChange={(e) => setField("name", e.target.value)}
-                />
-                <Input
-                  ref={(el) => {
-                    fieldRefs.current.handle = el;
-                  }}
-                  label="Handle"
-                  placeholder="@yourhandle"
-                  autoComplete="nickname"
-                  value={form.handle}
-                  error={errors.handle}
-                  onChange={(e) => setField("handle", e.target.value)}
-                />
-                <Input
-                  ref={(el) => {
-                    fieldRefs.current.phone = el;
-                  }}
-                  label="Phone"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="+44 7700 900000"
-                  value={form.phone}
-                  error={errors.phone}
-                  onChange={(e) => setField("phone", e.target.value)}
-                />
-                <Input
-                  ref={(el) => {
-                    fieldRefs.current.email = el;
-                  }}
-                  label="Email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  error={errors.email}
-                  onChange={(e) => setField("email", e.target.value)}
-                />
+          <Card className="rounded-3xl p-6 sm:p-8">
+            <div className="mb-8 rounded-2xl border border-dashed border-foreground/20 bg-transparent p-4 sm:p-5">
+              <div className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+                <FlaskConical className="h-3.5 w-3.5" aria-hidden />
+                Demo helper
               </div>
-
-              <Input
-                ref={(el) => {
-                  fieldRefs.current.github = el;
-                }}
-                label="GitHub"
-                placeholder="username"
-                autoComplete="off"
-                spellCheck={false}
-                hint="Optional — helps show what you've built."
-                value={form.github}
-                error={errors.github}
-                onChange={(e) => setField("github", e.target.value)}
-              />
-
-              <Textarea
-                ref={(el) => {
-                  fieldRefs.current.text = el;
-                }}
-                label="Why do you want to join?"
-                required
-                rows={5}
-                maxLength={TEXT_MAX}
-                placeholder="Tell the community what you're building…"
-                value={form.text}
-                error={errors.text}
-                hint={`At least ${TEXT_MIN} characters. Specifics beat buzzwords.`}
-                trailing={
-                  <span
-                    className={clsx(
-                      "text-[15px] font-medium tabular-nums",
-                      textLen >= TEXT_MAX ? "text-rose-700" : textLen > 0 && textLen < TEXT_MIN ? "text-amber-700" : "text-slate-600"
-                    )}
-                    aria-live="polite"
-                  >
-                    {textLen}/{TEXT_MAX}
-                  </span>
-                }
-                onChange={(e) => setField("text", e.target.value)}
-              />
-            </fieldset>
-
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <Button type="submit" size="lg" loading={pending} icon={<Send className="h-5 w-5" aria-hidden />}>
-                {pending ? "Checking…" : "Submit application"}
-              </Button>
-              {error && !pending ? (
-                <Button variant="ghost" size="lg" onClick={reset} icon={<RotateCcw className="h-5 w-5" aria-hidden />}>
-                  Apply again
+              <p className="mt-1.5 text-[15px] text-foreground/80">Prefill the form with a fictional test applicant.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={locked || !SCAMMER}
+                  onClick={() => prefill(SCAMMER, "south-london-hack-nights")}
+                  icon={<Skull className="h-3.5 w-3.5 text-rose-600" aria-hidden />}
+                >
+                  Try a known scammer
                 </Button>
-              ) : null}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={locked || !STRONG}
+                  onClick={() => prefill(STRONG, "london-agent-builders")}
+                  icon={<Sparkles className="h-3.5 w-3.5 text-emerald-600" aria-hidden />}
+                >
+                  Try a strong applicant
+                </Button>
+              </div>
             </div>
-          </form>
+
+            <form
+              noValidate
+              onSubmit={(e) => {
+                e.preventDefault();
+                void submit();
+              }}
+              className="space-y-6"
+            >
+              <fieldset disabled={locked} className="space-y-5 disabled:opacity-80">
+                <Select
+                  label="Community"
+                  required
+                  value={form.community_slug}
+                  onChange={(e) => setField("community_slug", e.target.value)}
+                >
+                  {COMMUNITIES.map((c) => (
+                    <option key={c.slug} value={c.slug}>
+                      {c.name}
+                    </option>
+                  ))}
+                </Select>
+
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Input
+                    ref={(el) => {
+                      fieldRefs.current.name = el;
+                    }}
+                    label="Name"
+                    required
+                    autoComplete="name"
+                    value={form.name}
+                    error={errors.name}
+                    onChange={(e) => setField("name", e.target.value)}
+                  />
+                  <Input
+                    ref={(el) => {
+                      fieldRefs.current.handle = el;
+                    }}
+                    label="Handle"
+                    placeholder="@yourhandle"
+                    autoComplete="nickname"
+                    value={form.handle}
+                    error={errors.handle}
+                    onChange={(e) => setField("handle", e.target.value)}
+                  />
+                  <Input
+                    ref={(el) => {
+                      fieldRefs.current.phone = el;
+                    }}
+                    label="Phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder="+44 7700 900000"
+                    value={form.phone}
+                    error={errors.phone}
+                    onChange={(e) => setField("phone", e.target.value)}
+                  />
+                  <Input
+                    ref={(el) => {
+                      fieldRefs.current.email = el;
+                    }}
+                    label="Email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    value={form.email}
+                    error={errors.email}
+                    onChange={(e) => setField("email", e.target.value)}
+                  />
+                </div>
+
+                <Input
+                  ref={(el) => {
+                    fieldRefs.current.github = el;
+                  }}
+                  label="GitHub"
+                  placeholder="username"
+                  autoComplete="off"
+                  spellCheck={false}
+                  hint="Optional — helps show what you've built."
+                  value={form.github}
+                  error={errors.github}
+                  onChange={(e) => setField("github", e.target.value)}
+                />
+
+                <Textarea
+                  ref={(el) => {
+                    fieldRefs.current.text = el;
+                  }}
+                  label="Why do you want to join?"
+                  required
+                  rows={5}
+                  maxLength={TEXT_MAX}
+                  placeholder="Tell the community what you're building…"
+                  value={form.text}
+                  error={errors.text}
+                  hint={`At least ${TEXT_MIN} characters. Specifics beat buzzwords.`}
+                  trailing={
+                    <span
+                      className={clsx(
+                        "text-[13px] tabular-nums",
+                        textLen >= TEXT_MAX
+                          ? "font-medium text-rose-700"
+                          : textLen > 0 && textLen < TEXT_MIN
+                            ? "font-medium text-amber-700"
+                            : "text-muted-foreground"
+                      )}
+                      aria-live="polite"
+                    >
+                      {textLen}/{TEXT_MAX}
+                    </span>
+                  }
+                  onChange={(e) => setField("text", e.target.value)}
+                />
+              </fieldset>
+
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <Button type="submit" size="lg" loading={pending} icon={<Send className="h-4 w-4" aria-hidden />}>
+                  {pending ? "Checking…" : "Submit application"}
+                </Button>
+                {error && !pending ? (
+                  <Button variant="ghost" size="lg" onClick={reset} icon={<RotateCcw className="h-4 w-4" aria-hidden />}>
+                    Apply again
+                  </Button>
+                ) : null}
+              </div>
+            </form>
+          </Card>
         </section>
 
         {/* ---------- Result panel ---------- */}
@@ -436,7 +444,7 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
               }
               details={error.details}
               onRetry={() => void submit()}
-              className="animate-gk-fade-in motion-reduce:animate-none"
+              className="rounded-3xl animate-gk-fade-in motion-reduce:animate-none"
             />
           ) : result ? (
             <ResultPanel result={result} headingRef={resultRef} onReset={reset} />
@@ -445,7 +453,7 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }
 
@@ -453,12 +461,12 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
 
 function IdlePanel() {
   return (
-    <div className="flex min-h-[22rem] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center">
-      <div className="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-white text-slate-700 ring-2 ring-slate-200">
-        <ShieldCheck className="h-7 w-7" aria-hidden />
+    <div className="flex min-h-[24rem] flex-col items-center justify-center rounded-3xl border border-dashed border-foreground/15 bg-card/50 px-6 py-12 text-center">
+      <div className="mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-muted text-foreground">
+        <ShieldCheck className="h-6 w-6" aria-hidden />
       </div>
-      <p className="text-xl font-bold text-slate-900">The result appears here</p>
-      <p className="mt-2 max-w-sm text-slate-600">
+      <p className="font-display text-3xl text-foreground">The result appears here</p>
+      <p className="mt-2 max-w-sm text-[15px] leading-relaxed text-muted-foreground">
         Submit the form to see the decision, score and signals the community lead gets — and the message the applicant
         gets.
       </p>
@@ -475,29 +483,29 @@ function LoadingPanel() {
   const sub = tick === 0 ? null : CYCLE_STAGES[(tick - 1) % CYCLE_STAGES.length];
 
   return (
-    <Card className="overflow-hidden" as="div">
-      <div className="h-1.5 w-full overflow-hidden bg-slate-100">
-        <div className="h-full w-1/3 animate-pulse rounded-full bg-slate-900 motion-reduce:animate-none" />
+    <Card className="overflow-hidden rounded-3xl">
+      <div className="h-1 w-full overflow-hidden bg-muted">
+        <div className="gk-shimmer h-full w-full bg-foreground/20" />
       </div>
-      <div className="p-6">
+      <div className="p-6 sm:p-8">
         <div role="status" className="flex items-start gap-3">
-          <Loader2 className="mt-1 h-6 w-6 shrink-0 animate-spin text-slate-900 motion-reduce:animate-none" aria-hidden />
+          <Loader2 className="mt-1 h-5 w-5 shrink-0 animate-spin text-muted-foreground motion-reduce:animate-none" aria-hidden />
           <div className="min-w-0">
-            <p className="text-lg font-bold text-slate-900">{FIRST_STAGE}</p>
-            <p key={tick} className="mt-1 h-6 text-slate-600 animate-gk-fade-in motion-reduce:animate-none">
-              {sub ?? " "}
+            <p className="font-display text-2xl leading-snug text-foreground">{FIRST_STAGE}</p>
+            <p key={tick} className="mt-1 h-6 text-[15px] text-muted-foreground animate-gk-fade-in motion-reduce:animate-none">
+              {sub ?? " "}
             </p>
           </div>
         </div>
-        <div className="mt-6 flex flex-wrap items-end gap-6">
-          <Skeleton className="h-16 w-48 rounded-xl" />
-          <Skeleton className="h-14 w-32" />
+        <div className="mt-8 flex flex-wrap items-end gap-6">
+          <Skeleton className="h-12 w-36 rounded-full" />
+          <Skeleton className="h-16 w-32 rounded-2xl" />
         </div>
-        <Skeleton className="mt-6 h-5 w-3/4" />
-        <Skeleton className="mt-2 h-5 w-1/2" />
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Skeleton className="mt-8 h-4 w-3/4 rounded-full" />
+        <Skeleton className="mt-3 h-4 w-1/2 rounded-full" />
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+            <Skeleton key={i} className="h-20 rounded-2xl" />
           ))}
         </div>
       </div>
@@ -523,40 +531,49 @@ function ResultPanel({
   return (
     <div className="space-y-6 animate-gk-fade-in motion-reduce:animate-none">
       {/* Internal view */}
-      <Card className={clsx("p-5 sm:p-6", hit && "ring-4 ring-rose-600")}>
+      <Card className={clsx("rounded-3xl p-6 sm:p-8", hit && "border-rose-300 ring-4 ring-rose-100")}>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3
             ref={headingRef}
             tabIndex={-1}
-            className={clsx("flex items-center gap-2 text-[15px] font-bold uppercase tracking-wide text-slate-700 rounded-md", focusRing)}
+            className={clsx(
+              "flex items-center gap-2 rounded-md text-[12px] font-medium uppercase tracking-wider text-muted-foreground",
+              focusRing
+            )}
           >
-            <Eye className="h-4 w-4" aria-hidden />
+            <Eye className="h-3.5 w-3.5" aria-hidden />
             What the lead sees
           </h3>
-          <span className="rounded-md bg-slate-900 px-2 py-0.5 text-[13px] font-semibold text-white">
+          <span className="rounded-full border border-border bg-muted px-2.5 py-0.5 text-[12px] font-medium text-foreground/80">
             Internal · not shown to applicant
           </span>
         </div>
 
-        <div className={clsx("mt-4 flex flex-wrap items-center gap-x-8 gap-y-4 rounded-2xl border-2 p-5", DECISION_SOFT[result.decision])}>
-          <DecisionPill decision={result.decision} size="xl" />
+        <div
+          className={clsx(
+            "mt-5 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 rounded-2xl border px-6 py-5",
+            DECISION_SOFT[result.decision]
+          )}
+        >
+          <DecisionPill decision={result.decision} size="md" className="px-4 py-1.5 text-[15px]" />
           <ScoreBadge score={result.score} size="xl" />
         </div>
 
         {hit ? <BlocklistCallout match={result.blocklist_match ?? {}} className="mt-5" /> : null}
 
-        <div className="mt-5">
-          <h4 className="font-bold text-slate-900">Reason</h4>
-          <p className="mt-1 text-lg leading-relaxed text-slate-900">{result.reason || "No reason returned."}</p>
+        <div className="mt-7">
+          <h4 className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">Reason</h4>
+          <p className="mt-2 text-[16px] leading-relaxed text-foreground">{result.reason || "No reason returned."}</p>
           {result.reason ? (
-            <blockquote className="mt-3 border-l-4 border-slate-900 pl-4 text-slate-700">
-              <span className="font-bold text-slate-900">Rule {ruleN}</span> — {ruleText(ruleN)}
+            <blockquote className="mt-4 border-l-2 border-foreground/20 pl-4">
+              <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">Rule {ruleN}</span>
+              <p className="mt-1 font-display text-xl italic leading-snug text-foreground/90">{ruleText(ruleN)}</p>
             </blockquote>
           ) : null}
         </div>
 
-        <div className="mt-5">
-          <h4 className="font-bold text-slate-900">Signals</h4>
+        <div className="mt-7">
+          <h4 className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">Signals</h4>
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {signals.map((s) => (
               <SignalChip key={s.key} signal={s} size="lg" />
@@ -564,7 +581,7 @@ function ResultPanel({
           </div>
         </div>
 
-        <p className="mt-5 text-[15px] text-slate-600">
+        <p className="mt-7 border-t border-border pt-5 text-[13px] text-muted-foreground">
           {community}
           {result.application_id ? (
             <>
@@ -577,16 +594,19 @@ function ResultPanel({
       </Card>
 
       {/* Applicant view */}
-      <Card className="p-5 sm:p-6">
-        <h3 className="flex items-center gap-2 text-[15px] font-bold uppercase tracking-wide text-slate-700">
-          <MessageSquareText className="h-4 w-4" aria-hidden />
+      <Card className="rounded-3xl p-6 sm:p-8">
+        <h3 className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+          <MessageSquareText className="h-3.5 w-3.5" aria-hidden />
           What the applicant sees
         </h3>
-        <div className="mt-4 rounded-xl bg-slate-50 p-5">
-          <p className="text-lg font-bold text-slate-900">{msg.title}</p>
-          <p className="mt-1 text-slate-700">{msg.body}</p>
+        <div className="mt-5 flex items-end gap-3">
+          <LogoMark className="h-8 w-8 shrink-0" />
+          <div className="max-w-md rounded-3xl rounded-bl-md bg-muted px-5 py-4">
+            <p className="font-medium text-foreground">{msg.title}</p>
+            <p className="mt-1 text-[15px] leading-relaxed text-foreground/80">{msg.body}</p>
+          </div>
         </div>
-        <div className="mt-4">
+        <div className="mt-6">
           <Button variant="secondary" onClick={onReset} icon={<RotateCcw className="h-4 w-4" aria-hidden />}>
             Apply again
           </Button>
