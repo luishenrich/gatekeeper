@@ -62,10 +62,10 @@ Stop scammers getting into communities while letting real builders in fast. Gate
   - `api/score/` – Score applicant endpoint
   - `api/decisions/` – Moderator decision endpoint
   - `api/blocklist/` – Blocklist check endpoint
-  - `api/_mock/` – Mock API routes for testing
+  - `api/mock/` – Mock API routes for testing (`USE_MOCKS=true`). App Router treats folders starting with `_` as private, so these live at `/api/mock/*`.
 - `lib/` – Shared utilities (HMAC, Supabase clients)
 - `supabase/migrations/` – Database schema
-- `fixtures/` – Demo data for mocks
+- `fixtures/` – Demo data for mocks (`queue.json` is the review queue)
 - `data/` – Fictional demo dataset (30 applicants, 2 communities)
 - `docs/` – Build spec and handoff docs
 

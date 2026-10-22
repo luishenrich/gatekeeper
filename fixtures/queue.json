@@ -1,0 +1,207 @@
+[
+  {
+    "id": "A22",
+    "community_slug": "south-london-hack-nights",
+    "community_name": "South London Hack Nights",
+    "name": "Max Moonshot",
+    "handle": "@cryptomax_alpha1",
+    "phone": "+44 7700 900901",
+    "email": "max.moonshot.vip@example.com",
+    "github": null,
+    "text": "Hello builders! Exclusive AI token presale, 10x guaranteed, message me for whitelist spot before it closes.",
+    "created_at": "2026-10-22T18:10:00Z",
+    "decision": "decline",
+    "score": 10,
+    "reason": "Same phone as A21, already confirmed on the shared blocklist; handle variation @cryptomax_alpha1; crypto pump (south-london-hack-nights rule 4).",
+    "signals": {
+      "rules_fit": {
+        "score": 8,
+        "rule_refs": ["south-london-hack-nights#4"]
+      },
+      "spam_text": {
+        "score": 0.94,
+        "matched_patterns": ["guaranteed returns", "presale", "whitelist"]
+      },
+      "stopforumspam": {
+        "appears": true,
+        "frequency": 4,
+        "confidence": 0.88
+      },
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": true
+    },
+    "final": false,
+    "blocklist_match": {
+      "matched_on": ["phone", "handle"],
+      "status": "confirmed",
+      "reported_at": "2026-10-22T18:00:00Z"
+    }
+  },
+  {
+    "id": "A21",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Max Moonshot",
+    "handle": "@cryptomax_alpha",
+    "phone": "+44 7700 900901",
+    "email": "max.moonshot@example.com",
+    "github": null,
+    "text": "Join my VIP signals group, 10x guaranteed on new AI token presale!! DM me now, limited spots, link in bio.",
+    "created_at": "2026-10-22T17:50:00Z",
+    "decision": "decline",
+    "score": 8,
+    "reason": "Crypto pump, guaranteed returns, urgency, and a DM lure (london-agent-builders rule 5). Not on the shared blocklist yet.",
+    "signals": {
+      "rules_fit": {
+        "score": 5,
+        "rule_refs": ["london-agent-builders#5"]
+      },
+      "spam_text": {
+        "score": 0.96,
+        "matched_patterns": ["guaranteed returns", "presale", "dm lure"]
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": false
+    },
+    "final": false
+  },
+  {
+    "id": "A15",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Odile Remote",
+    "handle": "@odile_r",
+    "phone": "+44 7700 900203",
+    "email": "odile.remote@example.com",
+    "github": "odile-r-demo",
+    "text": "I build LangGraph agents and contribute to two OSS repos. I live in Lisbon but visit London a few times a year.",
+    "created_at": "2026-10-22T16:30:00Z",
+    "decision": "ask",
+    "score": 62,
+    "reason": "Strong builder, but not London-based (london-agent-builders rule 3). Ask about attendance.",
+    "signals": {
+      "rules_fit": {
+        "score": 70,
+        "rule_refs": ["london-agent-builders#1", "london-agent-builders#3"]
+      },
+      "spam_text": {
+        "score": 0.02,
+        "matched_patterns": []
+      },
+      "stopforumspam": {
+        "appears": false,
+        "frequency": 0,
+        "confidence": 0.12
+      },
+      "github": {
+        "exists": true,
+        "account_age_days": 840,
+        "public_repos": 12
+      },
+      "devpost": {
+        "projects_found": 2
+      },
+      "blocklist_hit": false
+    },
+    "final": false
+  },
+  {
+    "id": "A14",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Nico Sellsome",
+    "handle": "@nico_sells",
+    "phone": "+44 7700 900202",
+    "email": "nico.sellsome@example.com",
+    "github": null,
+    "text": "Account executive at a fictional AI tooling vendor. I'd love to meet builders and understand their needs.",
+    "created_at": "2026-10-22T15:10:00Z",
+    "decision": "ask",
+    "score": 48,
+    "reason": "Sales role. May be fine, but london-agent-builders rule 4 forbids pitching. Ask intent and remind them of the no-pitch rule.",
+    "signals": {
+      "rules_fit": {
+        "score": 46,
+        "rule_refs": ["london-agent-builders#4"]
+      },
+      "spam_text": {
+        "score": 0.08,
+        "matched_patterns": []
+      },
+      "stopforumspam": {
+        "appears": false,
+        "frequency": 0,
+        "confidence": 0.2
+      },
+      "github": null,
+      "devpost": {
+        "projects_found": 0
+      },
+      "blocklist_hit": false
+    },
+    "final": false
+  },
+  {
+    "id": "A13",
+    "community_slug": "london-agent-builders",
+    "community_name": "London Agent Builders",
+    "name": "Mina Vaguely",
+    "handle": "@mina_v",
+    "phone": "+44 7700 900201",
+    "email": "mina.vaguely@example.com",
+    "github": null,
+    "text": "I'm really interested in AI and want to learn more. I've been following lots of newsletters.",
+    "created_at": "2026-10-22T14:00:00Z",
+    "decision": "ask",
+    "score": 42,
+    "reason": "Genuine-sounding, but no building activity. Ask what she is working on (london-agent-builders rule 2).",
+    "signals": {
+      "rules_fit": {
+        "score": 38,
+        "rule_refs": ["london-agent-builders#2"]
+      },
+      "spam_text": {
+        "score": 0.05,
+        "matched_patterns": []
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": false
+    },
+    "final": false
+  },
+  {
+    "id": "A19",
+    "community_slug": "south-london-hack-nights",
+    "community_name": "South London Hack Nights",
+    "name": "Sami Lowinfo",
+    "handle": "@sami_lo",
+    "phone": "+44 7700 900207",
+    "email": "sami.lowinfo@example.com",
+    "github": null,
+    "text": "Hi, please add me.",
+    "created_at": "2026-10-22T12:40:00Z",
+    "decision": "ask",
+    "score": 35,
+    "reason": "No information at all. Ask the South London Hack Nights screening question (rules 1 and 2).",
+    "signals": {
+      "rules_fit": {
+        "score": 18,
+        "rule_refs": ["south-london-hack-nights#1", "south-london-hack-nights#2"]
+      },
+      "spam_text": {
+        "score": 0.11,
+        "matched_patterns": []
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
+      "blocklist_hit": false
+    },
+    "final": false
+  }
+]
