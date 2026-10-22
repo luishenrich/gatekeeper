@@ -1,7 +1,22 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-/** True when this session's user has a row in community_leads. The table stores no email. */
-export async function userIsCommunityLead(
+/** True when the session user leads this community. The table stores no email. */
+export async function userLeadsCommunity(
+  supabase: SupabaseClient,
+  userId: string,
+  communityId: string
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("community_leads")
+    .select("user_id")
+    .eq("user_id", userId)
+    .eq("community_id", communityId)
+    .maybeSingle();
+  return !error && !!data;
+}
+
+/** True when the session user leads at least one community. */
+export async function userHasAnyLead(
   supabase: SupabaseClient,
   userId: string
 ): Promise<boolean> {
@@ -9,12 +24,6 @@ export async function userIsCommunityLead(
     .from("community_leads")
     .select("user_id")
     .eq("user_id", userId)
-    .maybeSingle();
-  return !error && !!data;
-}
-
-export async function hasCommunityLeadRow(supabase: SupabaseClient): Promise<boolean> {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) return false;
-  return userIsCommunityLead(supabase, data.user.id);
+    .limit(1);
+  return !error && !!data?.length;
 }

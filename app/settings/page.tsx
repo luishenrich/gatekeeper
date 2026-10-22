@@ -1,16 +1,11 @@
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { matchesLeadToken } from "@/lib/auth/queue-admin";
+import { requireLeadPage } from "@/lib/auth/requireLeadPage";
 import SettingsForm from "./settings-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const jar = await cookies();
-  if (!matchesLeadToken(jar.get("gk_lead")?.value)) {
-    redirect("/login");
-  }
+  await requireLeadPage();
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">

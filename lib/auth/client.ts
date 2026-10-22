@@ -10,7 +10,7 @@ export async function sendMagicLink(email: string) {
     email,
     options: {
       shouldCreateUser: false,
-      emailRedirectTo: `${origin}/auth/callback?next=/queue`,
+      emailRedirectTo: `${origin}/auth/callback`,
     },
   });
 }

@@ -19,13 +19,12 @@ type DecisionRow = {
 };
 
 export async function GET(req: NextRequest) {
-  if (!(await requireLead(req))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const community = req.nextUrl.searchParams.get("community");
   if (!community) {
     return NextResponse.json({ error: "Missing community query param" }, { status: 400 });
+  }
+  if (!(await requireLead(req, community))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {

@@ -13,11 +13,10 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!(await requireLead(req))) {
+  const { slug } = await params;
+  if (!(await requireLead(req, slug))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const { slug } = await params;
   const { data, error } = (await getServiceClient()
     .from("communities")
     .select("id, slug, name, auto_mode")
@@ -43,11 +42,10 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!(await requireLead(req))) {
+  const { slug } = await params;
+  if (!(await requireLead(req, slug))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const { slug } = await params;
   let body: { auto_mode?: unknown };
   try {
     body = await req.json();
