@@ -15,8 +15,9 @@ import {
   type TextareaHTMLAttributes,
 } from "react";
 
-export const focusRing =
-  "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-900/20";
+import { focusRing } from "./tokens";
+
+export { focusRing };
 
 /* ---------- Button ---------- */
 
