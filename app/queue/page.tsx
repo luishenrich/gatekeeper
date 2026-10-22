@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 type Decision = "accept" | "ask" | "decline";
+type Channel = "whatsapp" | "discord" | "web";
 
 type Signals = {
   rules_fit?: { score?: number; rule_refs?: string[] } | boolean | null;
@@ -28,10 +29,14 @@ type BlocklistMatch = {
   reported_at: string;
 };
 
+type ReplyDraft = { channel: string; text: string };
+
 type QueueApp = {
   id: string;
   community_slug: string;
   community_name: string;
+  channel?: Channel | string | null;
+  channel_user_id?: string | null;
   name: string;
   handle: string;
   phone: string;
@@ -85,6 +90,12 @@ function verdictStyles(decision: Decision): string {
   return "bg-rose-100 text-rose-800";
 }
 
+function channelStyles(channel: string): string {
+  if (channel === "whatsapp") return "bg-emerald-600 text-white";
+  if (channel === "discord") return "bg-indigo-600 text-white";
+  return "bg-slate-400 text-white";
+}
+
 function formatReportedAt(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString("en-GB", {
@@ -128,16 +139,23 @@ function apiBase(): string {
   return process.env.NEXT_PUBLIC_GATEKEEPER_API_URL || "";
 }
 
+function useMocks(): boolean {
+  return process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
+}
+
 function decisionsPath(id: string): string {
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
-  const prefix = useMocks ? "/api/_mock" : "/api";
+  const prefix = useMocks() ? "/api/_mock" : "/api";
   return `${apiBase()}${prefix}/decisions/${id}`;
 }
 
 function queuePath(community: string): string {
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
-  const prefix = useMocks ? "/api/_mock" : "/api";
+  const prefix = useMocks() ? "/api/_mock" : "/api";
   return `${apiBase()}${prefix}/queue?community=${encodeURIComponent(community)}`;
+}
+
+function channelSendPath(): string {
+  const prefix = useMocks() ? "/api/_mock" : "/api";
+  return `${apiBase()}${prefix}/channel/send`;
 }
 
 export default function QueuePage() {
@@ -151,6 +169,9 @@ export default function QueuePage() {
   const [evidence, setEvidence] = useState("");
   const [submitting, setSubmitting] = useState<string | null>(null);
   const [signalsOpen, setSignalsOpen] = useState<Record<string, boolean>>({});
+  const [replyDrafts, setReplyDrafts] = useState<Record<string, ReplyDraft>>({});
+  const [replyText, setReplyText] = useState<Record<string, string>>({});
+  const [sendingReply, setSendingReply] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -160,6 +181,8 @@ export default function QueuePage() {
       if (!res.ok) throw new Error(`Queue failed (${res.status})`);
       const data = await res.json();
       setApps(data.applications ?? []);
+      setReplyDrafts({});
+      setReplyText({});
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load queue");
     } finally {
@@ -177,6 +200,21 @@ export default function QueuePage() {
     return () => clearTimeout(t);
   }, [toast]);
 
+  function removeCard(id: string) {
+    setApps((list) => list.filter((a) => a.id !== id));
+    setReplyDrafts((d) => {
+      const next = { ...d };
+      delete next[id];
+      return next;
+    });
+    setReplyText((t) => {
+      const next = { ...t };
+      delete next[id];
+      return next;
+    });
+    setDeclineOpen((open) => (open === id ? null : open));
+  }
+
   async function submitDecision(
     app: QueueApp,
     decision: "accept" | "decline",
@@ -185,8 +223,6 @@ export default function QueuePage() {
   ) {
     setSubmitting(app.id);
     setError(null);
-    const prev = apps;
-    setApps((list) => list.filter((a) => a.id !== app.id));
     setDeclineOpen(null);
     setReportToggle(false);
     setEvidence("");
@@ -203,16 +239,47 @@ export default function QueuePage() {
       });
       if (!res.ok) throw new Error(`Decision failed (${res.status})`);
       const data = await res.json();
+
+      const parts: string[] = [`Marked ${decision}`];
       if (data.blocklist_status) {
-        setToast(`Reported to blocklist · status: ${data.blocklist_status}`);
+        parts.push(`blocklist: ${data.blocklist_status}`);
+      }
+      setToast(parts.join(" · "));
+
+      if (data.reply_draft?.channel && data.reply_draft?.text) {
+        setReplyDrafts((d) => ({ ...d, [app.id]: data.reply_draft }));
+        setReplyText((t) => ({ ...t, [app.id]: data.reply_draft.text }));
       } else {
-        setToast(`Marked ${decision}`);
+        removeCard(app.id);
       }
     } catch (e) {
-      setApps(prev);
       setError(e instanceof Error ? e.message : "Decision failed");
     } finally {
       setSubmitting(null);
+    }
+  }
+
+  async function sendReply(app: QueueApp) {
+    const draft = replyDrafts[app.id];
+    const text = (replyText[app.id] ?? draft?.text ?? "").trim();
+    if (!text) return;
+
+    setSendingReply(app.id);
+    setError(null);
+    try {
+      const res = await fetch(channelSendPath(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ application_id: app.id, text }),
+      });
+      if (!res.ok) throw new Error(`Send failed (${res.status})`);
+      const data = await res.json();
+      setToast(`Sent via ${data.channel ?? draft?.channel ?? "channel"}`);
+      removeCard(app.id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Send failed");
+    } finally {
+      setSendingReply(null);
     }
   }
 
@@ -254,9 +321,7 @@ export default function QueuePage() {
             {error}
           </div>
         )}
-        {loading && (
-          <p className="text-sm text-slate-500">Loading queue…</p>
-        )}
+        {loading && <p className="text-sm text-slate-500">Loading queue…</p>}
         {!loading && apps.length === 0 && (
           <p className="rounded-md border border-dashed border-slate-300 bg-white px-4 py-8 text-center text-slate-500">
             Queue empty for this community.
@@ -267,6 +332,8 @@ export default function QueuePage() {
           const match = app.blocklist_match;
           const openSignals = signalsOpen[app.id];
           const declining = declineOpen === app.id;
+          const channel = (app.channel || "web") as string;
+          const draft = replyDrafts[app.id];
 
           return (
             <article
@@ -287,6 +354,11 @@ export default function QueuePage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${channelStyles(channel)}`}
+                    >
+                      {channel}
+                    </span>
                     <h2 className="text-lg font-semibold">{app.name}</h2>
                     <span className="text-slate-500">{app.handle}</span>
                     <span
@@ -347,61 +419,105 @@ export default function QueuePage() {
                 </ul>
               )}
 
-              <div className="mt-5 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  disabled={submitting === app.id}
-                  onClick={() => submitDecision(app, "accept", false)}
-                  className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-                >
-                  Accept
-                </button>
-                <button
-                  type="button"
-                  disabled={submitting === app.id}
-                  onClick={() => {
-                    setDeclineOpen(declining ? null : app.id);
-                    setReportToggle(false);
-                    setEvidence("");
-                  }}
-                  className="rounded-md bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
-                >
-                  Decline
-                </button>
-              </div>
+              {!draft && (
+                <>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={submitting === app.id}
+                      onClick={() => submitDecision(app, "accept", false)}
+                      className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      type="button"
+                      disabled={submitting === app.id}
+                      onClick={() => {
+                        setDeclineOpen(declining ? null : app.id);
+                        setReportToggle(false);
+                        setEvidence("");
+                      }}
+                      className="rounded-md bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+                    >
+                      Decline
+                    </button>
+                  </div>
 
-              {declining && (
-                <div className="mt-4 space-y-3 rounded-md border border-rose-200 bg-rose-50 p-4">
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <input
-                      type="checkbox"
-                      checked={reportToggle}
-                      onChange={(e) => setReportToggle(e.target.checked)}
-                    />
-                    Report to shared blocklist
-                  </label>
-                  {reportToggle && (
-                    <textarea
-                      className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
-                      rows={3}
-                      placeholder="Evidence (required when reporting)"
-                      value={evidence}
-                      onChange={(e) => setEvidence(e.target.value)}
-                    />
+                  {declining && (
+                    <div className="mt-4 space-y-3 rounded-md border border-rose-200 bg-rose-50 p-4">
+                      <label className="flex items-center gap-2 text-sm font-medium">
+                        <input
+                          type="checkbox"
+                          checked={reportToggle}
+                          onChange={(e) => setReportToggle(e.target.checked)}
+                        />
+                        Report to shared blocklist
+                      </label>
+                      {reportToggle && (
+                        <textarea
+                          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+                          rows={3}
+                          placeholder="Evidence (required when reporting)"
+                          value={evidence}
+                          onChange={(e) => setEvidence(e.target.value)}
+                        />
+                      )}
+                      <button
+                        type="button"
+                        disabled={
+                          submitting === app.id ||
+                          (reportToggle && evidence.trim().length === 0)
+                        }
+                        onClick={() =>
+                          submitDecision(app, "decline", reportToggle, evidence)
+                        }
+                        className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+                      >
+                        Confirm decline
+                      </button>
+                    </div>
                   )}
-                  <button
-                    type="button"
-                    disabled={
-                      submitting === app.id ||
-                      (reportToggle && evidence.trim().length === 0)
+                </>
+              )}
+
+              {draft && (
+                <div className="mt-5 space-y-3 rounded-md border border-sky-200 bg-sky-50 p-4">
+                  <p className="text-sm font-medium text-sky-900">
+                    Reply draft — nothing is sent until you click Send
+                  </p>
+                  <textarea
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+                    rows={4}
+                    value={replyText[app.id] ?? draft.text}
+                    onChange={(e) =>
+                      setReplyText((t) => ({ ...t, [app.id]: e.target.value }))
                     }
-                    onClick={() =>
-                      submitDecision(app, "decline", reportToggle, evidence)
-                    }
-                    className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
-                  >
-                    Confirm decline
-                  </button>
+                  />
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={
+                        sendingReply === app.id ||
+                        !(replyText[app.id] ?? draft.text).trim()
+                      }
+                      onClick={() => sendReply(app)}
+                      className="rounded-md bg-sky-700 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-800 disabled:opacity-50"
+                    >
+                      Send reply via {draft.channel}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={sendingReply === app.id}
+                      onClick={() => {
+                        setToast("Skipped send — applicant not contacted");
+                        removeCard(app.id);
+                      }}
+                      className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    >
+                      Skip send
+                    </button>
+                  </div>
                 </div>
               )}
             </article>

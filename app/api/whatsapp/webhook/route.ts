@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
     const communitySlug = process.env.WHATSAPP_COMMUNITY_SLUG || "london-agent-builders";
 
-    const result = await scoreApplicationInternal(communitySlug, {
+    await scoreApplicationInternal(communitySlug, {
       phone: message.phone,
       handle: message.handle,
       text: message.text,
@@ -29,14 +29,12 @@ export async function POST(req: NextRequest) {
       forwarded: message.forwarded,
     });
 
-    if (result.decision === "accept") {
+    // Only automatic outbound allowed: fixed neutral ack (no verdict).
+    if (message.phone) {
       await adapter.sendReply(
-        message.phone!,
-        "Thanks! Your application looks good, and a lead will confirm shortly."
+        message.phone,
+        "Thanks, a moderator will review your application."
       );
-    } else if (result.decision === "ask") {
-      const followUp = result.reason.split(".")[0] + ".";
-      await adapter.sendReply(message.phone!, followUp);
     }
 
     return NextResponse.json({ status: "ok" }, { status: 200 });

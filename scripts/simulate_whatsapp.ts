@@ -1,5 +1,8 @@
 import crypto from "crypto";
 
+// A22 demo: same phone as A21 (+44 7700 900901 → 447700900901)
+const A22_WA_ID = "447700900901";
+
 const payload = {
   object: "whatsapp_business_account",
   entry: [
@@ -15,18 +18,18 @@ const payload = {
             },
             contacts: [
               {
-                profile: { name: "Test User" },
-                wa_id: "447700900999",
+                profile: { name: "Max Moonshot" },
+                wa_id: A22_WA_ID,
               },
             ],
             messages: [
               {
-                from: "447700900999",
-                id: `wamid.test${Date.now()}`,
+                from: A22_WA_ID,
+                id: `wamid.a22.${Date.now()}`,
                 timestamp: Math.floor(Date.now() / 1000).toString(),
                 type: "text",
                 text: {
-                  body: "I'm building AI agents for procurement automation. Based in London, happy to demo at meetups.",
+                  body: "Hello builders! Exclusive AI token presale, 10x guaranteed, message me for whitelist spot before it closes.",
                 },
               },
             ],
@@ -51,8 +54,7 @@ async function simulate() {
 
   const url = process.env.GATEKEEPER_API_URL || "http://localhost:3000";
 
-  console.log("Sending WhatsApp webhook simulation to", url);
-  console.log("Payload:", JSON.stringify(payload, null, 2));
+  console.log("Sending WhatsApp webhook simulation (A22 / same phone as A21) to", url);
 
   const res = await fetch(`${url}/api/whatsapp/webhook`, {
     method: "POST",
@@ -69,7 +71,7 @@ async function simulate() {
 
   if (res.ok) {
     console.log("\n✓ Simulation successful");
-    console.log("Check /queue to see the scored application");
+    console.log("Check /queue for the whatsapp-channel application (blocklist hit if A21 was reported).");
   } else {
     console.log("\n✗ Simulation failed");
   }
