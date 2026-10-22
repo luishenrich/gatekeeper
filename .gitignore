@@ -31,6 +31,7 @@ yarn-error.log*
 # env files
 .env*.local
 .env
+.env.*
 !.env.example
 
 # vercel
@@ -42,3 +43,6 @@ next-env.d.ts
 
 # local data (unknown license)
 data/sms_spam.local.json
+
+# local demo recordings
+/demo-video
