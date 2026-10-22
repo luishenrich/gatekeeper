@@ -4,6 +4,7 @@ import { scoreApplication } from "@/lib/scorer";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
 import { classifySpamText } from "@/lib/spam-classifier";
 import { checkStopForumSpam, checkGitHub, checkDevpost } from "@/lib/signals";
+import { maybeAutoSend } from "@/lib/auto-send";
 import type { Application } from "@/lib/scorer";
 
 export interface ScoringResult {
@@ -33,7 +34,7 @@ export async function scoreApplicationInternal(
 
   const { data: community, error: communityError } = await db
     .from("communities")
-    .select("id, rules_md")
+    .select("id, rules_md, auto_mode")
     .eq("slug", communitySlug)
     .maybeSingle();
 
@@ -163,21 +164,48 @@ export async function scoreApplicationInternal(
     signals.devpost = devpostResult;
   }
 
-  const { error: decisionError } = await db.from("decisions").insert({
-    application_id: appRecord.id,
-    decision,
-    score,
-    reason,
-    signals,
-    decided_by: "scorer",
-    final: false,
-  } as any);
+  const { data: decisionRow, error: decisionError } = await db
+    .from("decisions")
+    .insert({
+      application_id: appRecord.id,
+      decision,
+      score,
+      reason,
+      signals,
+      decided_by: "scorer",
+      final: false,
+      auto_sent: false,
+    } as any)
+    .select("id")
+    .single();
 
-  if (decisionError) {
+  if (decisionError || !decisionRow) {
     console.error("score: decision insert failed", decisionError);
-    throw new Error(
-      `Failed to save decision: ${[decisionError.message, decisionError.code, decisionError.details].filter(Boolean).join(" ")}`
-    );
+    const detail = decisionError
+      ? [decisionError.message, decisionError.code, decisionError.details].filter(Boolean).join(" ")
+      : "no row returned";
+    throw new Error(`Failed to save decision: ${detail}`);
+  }
+
+  const autoSent = await maybeAutoSend({
+    autoMode: community.auto_mode === true,
+    communityId: community.id,
+    applicationId: appRecord.id,
+    decision,
+    blocklistHit: signals.blocklist_hit === true,
+    channel: application.channel,
+    channelUserId: application.channel_user_id,
+    phone: application.phone,
+  });
+
+  if (autoSent) {
+    const { error: autoFlagError } = await db
+      .from("decisions")
+      .update({ auto_sent: true } as any)
+      .eq("id", decisionRow.id);
+    if (autoFlagError) {
+      console.error("score: auto_sent update failed", autoFlagError);
+    }
   }
 
   const { error: auditError } = await db.from("audit_log").insert({

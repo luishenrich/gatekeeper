@@ -24,6 +24,7 @@ type DecisionRow = {
   reason: string | null;
   signals: Record<string, unknown> | null;
   final: boolean;
+  auto_sent: boolean | null;
   created_at: string;
 };
 
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
 
     const { data: decisions } = (await getServiceClient()
       .from("decisions")
-      .select("application_id, decision, score, reason, signals, final, created_at")
+      .select("application_id, decision, score, reason, signals, final, auto_sent, created_at")
       .in(
         "application_id",
         applications.map((a) => a.id)
@@ -136,6 +137,7 @@ export async function GET(req: NextRequest) {
           score: latest.score,
           reason: latest.reason,
           final: latest.final,
+          auto_sent: latest.auto_sent === true,
           signals: publicSignals,
           blocklist_match,
         },
