@@ -7,7 +7,6 @@ import {
   BlocklistCallout,
   Button,
   Card,
-  DECISION_SOFT,
   DecisionPill,
   ErrorState,
   Input,
@@ -240,66 +239,60 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
 
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
-      <div className="pb-10">
-        <div className="mb-4 flex items-center gap-2 text-[13px] font-medium uppercase tracking-wider text-muted-foreground">
-          <ShieldCheck className="h-4 w-4" aria-hidden />
-          Public application · no account needed
+    <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+      <div className="flex flex-col gap-4 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-display text-4xl leading-none tracking-tight text-foreground sm:text-5xl">
+            Apply to <em className="font-display italic">join</em>
+          </h1>
+          <p className="mt-2 text-[15px] text-muted-foreground">
+            Checked against the community&apos;s rules in seconds. A human lead makes the final call.
+          </p>
         </div>
-        <h1 className="font-display text-5xl leading-[1.02] tracking-tight text-foreground sm:text-6xl">
-          Apply to <em className="font-display italic">join</em>
-        </h1>
-        <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
-          Tell the community who you are and what you&apos;re building. Every application is checked against the
-          community&apos;s rules before a human lead decides.
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="flex items-center gap-1.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+            <FlaskConical className="h-3.5 w-3.5" aria-hidden />
+            Demo
+          </span>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={locked || !SCAMMER}
+            onClick={() => prefill(SCAMMER, "south-london-hack-nights")}
+            icon={<Skull className="h-3.5 w-3.5 text-red-600" aria-hidden />}
+          >
+            Known scammer
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={locked || !STRONG}
+            onClick={() => prefill(STRONG, "london-agent-builders")}
+            icon={<Sparkles className="h-3.5 w-3.5 text-green-600" aria-hidden />}
+          >
+            Strong applicant
+          </Button>
+        </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-start">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
         {/* ---------- Form ---------- */}
         <section aria-labelledby="apply-form-title">
           <h2 id="apply-form-title" className="sr-only">
             Application form
           </h2>
 
-          <Card className="rounded-3xl p-6 sm:p-8">
-            <div className="mb-8 rounded-2xl border border-dashed border-foreground/20 bg-transparent p-4 sm:p-5">
-              <div className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
-                <FlaskConical className="h-3.5 w-3.5" aria-hidden />
-                Demo helper
-              </div>
-              <p className="mt-1.5 text-[15px] text-foreground/80">Prefill the form with a fictional test applicant.</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={locked || !SCAMMER}
-                  onClick={() => prefill(SCAMMER, "south-london-hack-nights")}
-                  icon={<Skull className="h-3.5 w-3.5 text-rose-600" aria-hidden />}
-                >
-                  Try a known scammer
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={locked || !STRONG}
-                  onClick={() => prefill(STRONG, "london-agent-builders")}
-                  icon={<Sparkles className="h-3.5 w-3.5 text-emerald-600" aria-hidden />}
-                >
-                  Try a strong applicant
-                </Button>
-              </div>
-            </div>
-
+          <Card className="rounded-3xl p-5 sm:p-6">
             <form
               noValidate
               onSubmit={(e) => {
                 e.preventDefault();
                 void submit();
               }}
-              className="space-y-6"
+              className="space-y-4"
             >
-              <fieldset disabled={locked} className="space-y-5 disabled:opacity-80">
+              <fieldset disabled={locked} className="space-y-3.5 disabled:opacity-80">
+                <div className="grid gap-3.5 sm:grid-cols-2">
                 <Select
                   label="Community"
                   required
@@ -313,7 +306,6 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
                   ))}
                 </Select>
 
-                <div className="grid gap-5 sm:grid-cols-2">
                   <Input
                     ref={(el) => {
                       fieldRefs.current.name = el;
@@ -362,21 +354,20 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
                     error={errors.email}
                     onChange={(e) => setField("email", e.target.value)}
                   />
-                </div>
 
                 <Input
                   ref={(el) => {
                     fieldRefs.current.github = el;
                   }}
                   label="GitHub"
-                  placeholder="username"
+                  placeholder="username (optional)"
                   autoComplete="off"
                   spellCheck={false}
-                  hint="Optional — helps show what you've built."
                   value={form.github}
                   error={errors.github}
                   onChange={(e) => setField("github", e.target.value)}
                 />
+                </div>
 
                 <Textarea
                   ref={(el) => {
@@ -384,12 +375,11 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
                   }}
                   label="Why do you want to join?"
                   required
-                  rows={5}
+                  rows={4}
                   maxLength={TEXT_MAX}
                   placeholder="Tell the community what you're building…"
                   value={form.text}
                   error={errors.text}
-                  hint={`At least ${TEXT_MIN} characters. Specifics beat buzzwords.`}
                   trailing={
                     <span
                       className={clsx(
@@ -409,8 +399,8 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
                 />
               </fieldset>
 
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Button type="submit" size="lg" loading={pending} icon={<Send className="h-4 w-4" aria-hidden />}>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button type="submit" size="lg" className="w-full sm:w-auto" loading={pending} icon={<Send className="h-4 w-4" aria-hidden />}>
                   {pending ? "Checking…" : "Submit application"}
                 </Button>
                 {error && !pending ? (
@@ -461,14 +451,13 @@ export default function ApplyClient({ useMocks }: { useMocks: boolean }) {
 
 function IdlePanel() {
   return (
-    <div className="flex min-h-[24rem] flex-col items-center justify-center rounded-3xl border border-dashed border-foreground/15 bg-card/50 px-6 py-12 text-center">
+    <div className="flex min-h-[18rem] flex-col items-center justify-center rounded-3xl border border-dashed border-foreground/15 bg-card/50 px-6 py-10 text-center">
       <div className="mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-muted text-foreground">
         <ShieldCheck className="h-6 w-6" aria-hidden />
       </div>
-      <p className="font-display text-3xl text-foreground">The result appears here</p>
+      <p className="font-display text-2xl text-foreground">The result appears here</p>
       <p className="mt-2 max-w-sm text-[15px] leading-relaxed text-muted-foreground">
-        Submit the form to see the decision, score and signals the community lead gets — and the message the applicant
-        gets.
+        Decision, score and signals for the lead, plus the message the applicant gets.
       </p>
     </div>
   );
@@ -487,7 +476,7 @@ function LoadingPanel() {
       <div className="h-1 w-full overflow-hidden bg-muted">
         <div className="gk-shimmer h-full w-full bg-foreground/20" />
       </div>
-      <div className="p-6 sm:p-8">
+      <div className="p-5 sm:p-6">
         <div role="status" className="flex items-start gap-3">
           <Loader2 className="mt-1 h-5 w-5 shrink-0 animate-spin text-muted-foreground motion-reduce:animate-none" aria-hidden />
           <div className="min-w-0">
@@ -497,15 +486,15 @@ function LoadingPanel() {
             </p>
           </div>
         </div>
-        <div className="mt-8 flex flex-wrap items-end gap-6">
+        <div className="mt-6 flex flex-wrap items-end gap-6">
           <Skeleton className="h-12 w-36 rounded-full" />
           <Skeleton className="h-16 w-32 rounded-2xl" />
         </div>
-        <Skeleton className="mt-8 h-4 w-3/4 rounded-full" />
+        <Skeleton className="mt-6 h-4 w-3/4 rounded-full" />
         <Skeleton className="mt-3 h-4 w-1/2 rounded-full" />
-        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="mt-6 flex flex-wrap gap-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-2xl" />
+            <Skeleton key={i} className="h-7 w-28 rounded-full" />
           ))}
         </div>
       </div>
@@ -529,89 +518,60 @@ function ResultPanel({
   const msg = applicantMessage(result.decision, community);
 
   return (
-    <div className="space-y-6 animate-gk-fade-in motion-reduce:animate-none">
-      {/* Internal view */}
-      <Card className={clsx("rounded-3xl p-6 sm:p-8", hit && "border-rose-300 ring-4 ring-rose-100")}>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3
-            ref={headingRef}
-            tabIndex={-1}
-            className={clsx(
-              "flex items-center gap-2 rounded-md text-[12px] font-medium uppercase tracking-wider text-muted-foreground",
-              focusRing
-            )}
-          >
-            <Eye className="h-3.5 w-3.5" aria-hidden />
-            What the lead sees
-          </h3>
-          <span className="rounded-full border border-border bg-muted px-2.5 py-0.5 text-[12px] font-medium text-foreground/80">
-            Internal · not shown to applicant
-          </span>
-        </div>
-
-        <div
+    <Card className={clsx("rounded-3xl p-5 sm:p-6 animate-gk-fade-in motion-reduce:animate-none", hit && "border-red-300 ring-4 ring-red-100")}>
+      <div className="flex items-center justify-between gap-2">
+        <h3
+          ref={headingRef}
+          tabIndex={-1}
           className={clsx(
-            "mt-5 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 rounded-2xl border px-6 py-5",
-            DECISION_SOFT[result.decision]
+            "flex items-center gap-2 rounded-md text-[12px] font-medium uppercase tracking-wider text-muted-foreground",
+            focusRing
           )}
         >
-          <DecisionPill decision={result.decision} size="md" className="px-4 py-1.5 text-[15px]" />
-          <ScoreBadge score={result.score} size="xl" />
-        </div>
+          <Eye className="h-3.5 w-3.5" aria-hidden />
+          What the lead sees
+        </h3>
+        <Button variant="ghost" size="sm" onClick={onReset} icon={<RotateCcw className="h-3.5 w-3.5" aria-hidden />}>
+          Apply again
+        </Button>
+      </div>
 
-        {hit ? <BlocklistCallout match={result.blocklist_match ?? {}} className="mt-5" /> : null}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-2xl border border-border bg-muted/40 px-5 py-4">
+        <DecisionPill decision={result.decision} size="md" />
+        <ScoreBadge score={result.score} size="xl" />
+      </div>
 
-        <div className="mt-7">
-          <h4 className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">Reason</h4>
-          <p className="mt-2 text-[16px] leading-relaxed text-foreground">{result.reason || "No reason returned."}</p>
-          {result.reason ? (
-            <blockquote className="mt-4 border-l-2 border-foreground/20 pl-4">
-              <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">Rule {ruleN}</span>
-              <p className="mt-1 font-display text-xl italic leading-snug text-foreground/90">{ruleText(ruleN)}</p>
-            </blockquote>
-          ) : null}
-        </div>
+      {hit ? <BlocklistCallout match={result.blocklist_match ?? {}} className="mt-3" /> : null}
 
-        <div className="mt-7">
-          <h4 className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">Signals</h4>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {signals.map((s) => (
-              <SignalChip key={s.key} signal={s} size="lg" />
-            ))}
-          </div>
-        </div>
-
-        <p className="mt-7 border-t border-border pt-5 text-[13px] text-muted-foreground">
-          {community}
-          {result.application_id ? (
-            <>
-              {" · "}
-              <span className="font-mono">{result.application_id}</span>
-            </>
-          ) : null}
-          {" · "}Final call stays with a human lead.
+      <p className="mt-4 text-[15px] leading-relaxed text-foreground">{result.reason || "No reason returned."}</p>
+      {result.reason ? (
+        <p className="mt-1.5 text-[13px] leading-snug text-muted-foreground">
+          <span className="font-medium text-foreground/80">Rule {ruleN}</span> — {ruleText(ruleN)}
         </p>
-      </Card>
+      ) : null}
 
-      {/* Applicant view */}
-      <Card className="rounded-3xl p-6 sm:p-8">
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {signals.map((s) => (
+          <SignalChip key={s.key} signal={s} />
+        ))}
+      </div>
+
+      <div className="mt-5 border-t border-border pt-4">
         <h3 className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
           <MessageSquareText className="h-3.5 w-3.5" aria-hidden />
           What the applicant sees
         </h3>
-        <div className="mt-5 flex items-end gap-3">
-          <LogoMark className="h-8 w-8 shrink-0" />
-          <div className="max-w-md rounded-3xl rounded-bl-md bg-muted px-5 py-4">
-            <p className="font-medium text-foreground">{msg.title}</p>
-            <p className="mt-1 text-[15px] leading-relaxed text-foreground/80">{msg.body}</p>
+        <div className="mt-2.5 flex items-end gap-2.5">
+          <LogoMark className="h-7 w-7 shrink-0" />
+          <div className="rounded-2xl rounded-bl-md bg-muted px-4 py-2.5">
+            <p className="text-[14px] font-medium text-foreground">{msg.title}</p>
+            <p className="text-[14px] leading-snug text-foreground/80">{msg.body}</p>
           </div>
         </div>
-        <div className="mt-6">
-          <Button variant="secondary" onClick={onReset} icon={<RotateCcw className="h-4 w-4" aria-hidden />}>
-            Apply again
-          </Button>
-        </div>
-      </Card>
-    </div>
+        <p className="mt-3 text-[12px] text-muted-foreground">
+          {community} · Final call stays with a human lead.
+        </p>
+      </div>
+    </Card>
   );
 }
