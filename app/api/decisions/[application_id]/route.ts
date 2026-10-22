@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireLead } from "@/lib/auth/requireLead";
 import { getServiceClient } from "@/lib/supabase/server";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ application_id: string }> }) {
+  if (!(await requireLead(req))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { application_id } = await params;
     const body = await req.json();

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase/server";
-import { checkQueueAuth } from "@/lib/auth/queue-admin";
+import { requireLead } from "@/lib/auth/requireLead";
 
 type CommunitySettings = {
   id: string;
@@ -13,7 +13,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!checkQueueAuth(req)) {
+  if (!(await requireLead(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -43,7 +43,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!checkQueueAuth(req)) {
+  if (!(await requireLead(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

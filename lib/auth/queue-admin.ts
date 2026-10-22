@@ -1,22 +1,10 @@
 import { NextRequest } from "next/server";
-import { timingSafeEqual } from "crypto";
+import { matchesLeadToken, tokensEqual } from "@/lib/auth/lead-token";
 
-function tokensEqual(provided: string, token: string): boolean {
-  if (provided.length !== token.length) return false;
-  try {
-    return timingSafeEqual(Buffer.from(provided), Buffer.from(token));
-  } catch {
-    return false;
-  }
-}
+export { matchesLeadToken };
 
-export function matchesLeadToken(cookie: string | undefined): boolean {
-  const token = process.env.QUEUE_ADMIN_TOKEN;
-  if (!token || !cookie) return false;
-  return tokensEqual(cookie, token);
-}
-
-export function checkQueueAuth(req: NextRequest): boolean {
+/** Bearer QUEUE_ADMIN_TOKEN or the gk_lead cookie. Does not look at a Supabase session. */
+export function hasAdminCredential(req: NextRequest): boolean {
   const token = process.env.QUEUE_ADMIN_TOKEN;
   if (!token) return false;
 
@@ -26,4 +14,8 @@ export function checkQueueAuth(req: NextRequest): boolean {
   }
 
   return matchesLeadToken(req.cookies.get("gk_lead")?.value);
+}
+
+export function checkQueueAuth(req: NextRequest): boolean {
+  return hasAdminCredential(req);
 }

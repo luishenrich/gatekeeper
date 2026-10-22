@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase/server";
 import { WhatsAppAdapter } from "@/lib/channels/whatsapp";
-import { checkQueueAuth } from "@/lib/auth/queue-admin";
+import { requireLead } from "@/lib/auth/requireLead";
 import { auditPhone } from "@/lib/hmac";
 
 const NEUTRAL_FALLBACK =
   "Thanks for applying. A community lead will follow up if needed.";
 
 export async function POST(req: NextRequest) {
-  if (!checkQueueAuth(req)) {
+  if (!(await requireLead(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
