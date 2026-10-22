@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, ExternalLink, FlaskConical, Inbox, LogOut, Settings2, UserPlus } from "lucide-react";
+import { BarChart3, BookOpenText, ExternalLink, FlaskConical, Inbox, LogOut, Settings2, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -25,6 +25,7 @@ import { useCommunity } from "@/lib/ui/useCommunity";
 const WORK = [
   { href: "/queue", label: "Review queue", icon: Inbox, hint: "J/K · A/S/D" },
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
+  { href: "/rules", label: "Community rules", icon: BookOpenText },
   { href: "/settings", label: "Settings", icon: Settings2 },
 ] as const;
 

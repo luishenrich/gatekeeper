@@ -10,6 +10,7 @@ const TITLES: Record<string, string> = {
   "/queue": "Review queue",
   "/dashboard": "Dashboard",
   "/settings": "Settings",
+  "/rules": "Community rules",
 };
 
 export function AppHeader() {
