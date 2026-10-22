@@ -12,10 +12,27 @@
     "score": 95,
     "reason": "Builds agents, open-source repo, offers to demo, London-based (rules 1, 2, 3).",
     "signals": {
-      "rules_fit": true,
-      "stopforumspam": false,
-      "github": true,
-      "spam_text": false,
+      "rules_fit": {
+        "score": 95,
+        "rule_refs": ["london-agent-builders#1", "london-agent-builders#2", "london-agent-builders#3"]
+      },
+      "spam_text": {
+        "score": 0,
+        "matched_patterns": []
+      },
+      "stopforumspam": {
+        "appears": false,
+        "frequency": 0,
+        "confidence": 0
+      },
+      "github": {
+        "exists": true,
+        "account_age_days": 450,
+        "public_repos": 8
+      },
+      "devpost": {
+        "projects_found": 2
+      },
       "blocklist_hit": false
     }
   },
@@ -31,10 +48,17 @@
     "score": 55,
     "reason": "Genuine-sounding but no building activity; ask what she is working on (rule 2).",
     "signals": {
-      "rules_fit": false,
-      "stopforumspam": false,
-      "github": false,
-      "spam_text": false,
+      "rules_fit": {
+        "score": 55,
+        "rule_refs": ["london-agent-builders#2"]
+      },
+      "spam_text": {
+        "score": 0,
+        "matched_patterns": []
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
       "blocklist_hit": false
     }
   },
@@ -50,10 +74,17 @@
     "score": 5,
     "reason": "Crypto pump, guaranteed returns, urgency, DM lure (rule 5).",
     "signals": {
-      "rules_fit": false,
-      "stopforumspam": false,
-      "github": false,
-      "spam_text": true,
+      "rules_fit": {
+        "score": 5,
+        "rule_refs": ["london-agent-builders#5"]
+      },
+      "spam_text": {
+        "score": 0.95,
+        "matched_patterns": ["guaranteed_returns", "urgency", "dm_lure", "crypto"]
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
       "blocklist_hit": false
     }
   },
@@ -67,12 +98,19 @@
     "text": "Hello builders! Exclusive AI token presale, 10x guaranteed, message me for whitelist spot before it closes.",
     "decision": "decline",
     "score": 10,
-    "reason": "Same phone as A21 (blocklisted in community 1); handle variation; crypto pump.",
+    "reason": "Matched shared blocklist on phone, handle (confirmed in london-agent-builders). Handle variation; crypto pump.",
     "signals": {
-      "rules_fit": false,
-      "stopforumspam": false,
-      "github": false,
-      "spam_text": true,
+      "rules_fit": {
+        "score": 10,
+        "rule_refs": ["south-london-hack-nights#4"]
+      },
+      "spam_text": {
+        "score": 0.92,
+        "matched_patterns": ["guaranteed_returns", "urgency", "crypto"]
+      },
+      "stopforumspam": null,
+      "github": null,
+      "devpost": null,
       "blocklist_hit": true
     },
     "blocklist_match": {
@@ -93,10 +131,21 @@
     "score": 60,
     "reason": "Sales role; may be fine but rule 4 forbids pitching — ask intent and remind of no-pitch rule.",
     "signals": {
-      "rules_fit": false,
-      "stopforumspam": false,
-      "github": false,
-      "spam_text": false,
+      "rules_fit": {
+        "score": 60,
+        "rule_refs": ["london-agent-builders#4"]
+      },
+      "spam_text": {
+        "score": 0.1,
+        "matched_patterns": []
+      },
+      "stopforumspam": {
+        "appears": false,
+        "frequency": 0,
+        "confidence": 0
+      },
+      "github": null,
+      "devpost": null,
       "blocklist_hit": false
     }
   },
@@ -112,10 +161,21 @@
     "score": 2,
     "reason": "Fake recruiter: asks for ID/bank details, unrealistic pay (rule 5).",
     "signals": {
-      "rules_fit": false,
-      "stopforumspam": false,
-      "github": false,
-      "spam_text": true,
+      "rules_fit": {
+        "score": 2,
+        "rule_refs": ["london-agent-builders#5"]
+      },
+      "spam_text": {
+        "score": 0.88,
+        "matched_patterns": ["fake_recruiter", "urgency", "unrealistic_pay"]
+      },
+      "stopforumspam": {
+        "appears": true,
+        "frequency": 12,
+        "confidence": 0.85
+      },
+      "github": null,
+      "devpost": null,
       "blocklist_hit": false
     }
   }
