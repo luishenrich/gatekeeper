@@ -48,6 +48,7 @@ type QueueApp = {
   score: number;
   reason: string;
   final: boolean;
+  auto_sent?: boolean;
   signals: Signals;
   blocklist_match?: BlocklistMatch;
 };
@@ -232,6 +233,7 @@ export default function LegacyQueue({
   const [replyDrafts, setReplyDrafts] = useState<Record<string, ReplyDraft>>({});
   const [replyText, setReplyText] = useState<Record<string, string>>({});
   const [sendingReply, setSendingReply] = useState<string | null>(null);
+  const [autoMode, setAutoMode] = useState<"loading" | "on" | "off" | "unknown">("loading");
 
   const load = useCallback(async () => {
     if (!authed) return;
@@ -258,6 +260,27 @@ export default function LegacyQueue({
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (!authed) return;
+    let cancelled = false;
+    setAutoMode("loading");
+    (async () => {
+      try {
+        const res = await fetch(`/api/communities/${community}/settings`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`Settings failed (${res.status})`);
+        const data = await res.json();
+        if (!cancelled) setAutoMode(data.auto_mode === true ? "on" : "off");
+      } catch {
+        if (!cancelled) setAutoMode("unknown");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [community, authed]);
 
   useEffect(() => {
     if (!toast) return;
@@ -363,7 +386,14 @@ export default function LegacyQueue({
               Gatekeeper
             </Link>
             <h1 className="text-xl font-semibold tracking-tight">Review Queue</h1>
+            <Link href="/settings" className="text-sm font-medium text-slate-700 underline">
+              Settings
+            </Link>
           </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-semibold text-slate-700">
+              Auto mode {autoMode === "loading" ? "…" : autoMode === "unknown" ? "unavailable" : autoMode}
+            </span>
           <label className="flex items-center gap-2 text-sm">
             <span className="text-slate-500">Community</span>
             <select
@@ -378,6 +408,7 @@ export default function LegacyQueue({
               ))}
             </select>
           </label>
+          </div>
         </div>
       </header>
 
@@ -437,6 +468,11 @@ export default function LegacyQueue({
                     >
                       {app.decision}
                     </span>
+                    {app.auto_sent && (
+                      <span className="rounded bg-sky-100 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-sky-900">
+                        auto-sent
+                      </span>
+                    )}
                   </div>
                   <p className="mt-1 text-sm text-slate-500">
                     {app.community_name} · {maskPhone(app.phone)} ·{" "}

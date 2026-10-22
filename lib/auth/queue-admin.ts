@@ -10,6 +10,12 @@ function tokensEqual(provided: string, token: string): boolean {
   }
 }
 
+export function matchesLeadToken(cookie: string | undefined): boolean {
+  const token = process.env.QUEUE_ADMIN_TOKEN;
+  if (!token || !cookie) return false;
+  return tokensEqual(cookie, token);
+}
+
 export function checkQueueAuth(req: NextRequest): boolean {
   const token = process.env.QUEUE_ADMIN_TOKEN;
   if (!token) return false;
@@ -19,6 +25,5 @@ export function checkQueueAuth(req: NextRequest): boolean {
     return true;
   }
 
-  const cookie = req.cookies.get("gk_lead")?.value;
-  return !!cookie && tokensEqual(cookie, token);
+  return matchesLeadToken(req.cookies.get("gk_lead")?.value);
 }

@@ -24,7 +24,6 @@ type DecisionRow = {
   reason: string | null;
   signals: Record<string, unknown> | null;
   final: boolean;
-  auto_sent: boolean | null;
   created_at: string;
 };
 
@@ -72,7 +71,7 @@ export async function GET(req: NextRequest) {
 
     const { data: decisions } = (await getServiceClient()
       .from("decisions")
-      .select("application_id, decision, score, reason, signals, final, auto_sent, created_at")
+      .select("application_id, decision, score, reason, signals, final, created_at")
       .in(
         "application_id",
         applications.map((a) => a.id)
@@ -137,14 +136,39 @@ export async function GET(req: NextRequest) {
           score: latest.score,
           reason: latest.reason,
           final: latest.final,
-          auto_sent: latest.auto_sent === true,
           signals: publicSignals,
           blocklist_match,
         },
       ];
     });
 
-    return NextResponse.json({ applications: queue });
+    const sentIds = new Set<string>();
+    if (queue.length > 0) {
+      const { data: sends, error: sendError } = (await getServiceClient()
+        .from("audit_log")
+        .select("details")
+        .eq("community_id", communityRecord.id)
+        .eq("action", "auto_send")
+        .eq("auto", true)) as {
+        data: { details: { application_id?: string } | null }[] | null;
+        error: { message: string } | null;
+      };
+      if (sendError) {
+        console.error("queue auto_send lookup failed", sendError);
+      } else {
+        for (const row of sends || []) {
+          const id = row.details?.application_id;
+          if (id) sentIds.add(id);
+        }
+      }
+    }
+
+    return NextResponse.json({
+      applications: queue.map((item) => ({
+        ...item,
+        auto_sent: sentIds.has(item.id),
+      })),
+    });
   } catch (error: any) {
     console.error("queue error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

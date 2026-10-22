@@ -164,49 +164,35 @@ export async function scoreApplicationInternal(
     signals.devpost = devpostResult;
   }
 
-  const { data: decisionRow, error: decisionError } = await db
-    .from("decisions")
-    .insert({
-      application_id: appRecord.id,
-      decision,
-      score,
-      reason,
-      signals,
-      decided_by: "scorer",
-      final: false,
-      auto_sent: false,
-    } as any)
-    .select("id")
-    .single();
+  const { error: decisionError } = await db.from("decisions").insert({
+    application_id: appRecord.id,
+    decision,
+    score,
+    reason,
+    signals,
+    decided_by: "scorer",
+    final: false,
+  } as any);
 
-  if (decisionError || !decisionRow) {
+  if (decisionError) {
     console.error("score: decision insert failed", decisionError);
-    const detail = decisionError
-      ? [decisionError.message, decisionError.code, decisionError.details].filter(Boolean).join(" ")
-      : "no row returned";
-    throw new Error(`Failed to save decision: ${detail}`);
+    throw new Error(
+      `Failed to save decision: ${[decisionError.message, decisionError.code, decisionError.details].filter(Boolean).join(" ")}`
+    );
   }
 
-  const autoSent = await maybeAutoSend({
+  await maybeAutoSend({
     autoMode: community.auto_mode === true,
     communityId: community.id,
     applicationId: appRecord.id,
     decision,
-    blocklistHit: signals.blocklist_hit === true,
+    reason,
+    score,
+    blocklistHit: signals.blocklist_hit === true || !!blocklist_match,
     channel: application.channel,
     channelUserId: application.channel_user_id,
     phone: application.phone,
   });
-
-  if (autoSent) {
-    const { error: autoFlagError } = await db
-      .from("decisions")
-      .update({ auto_sent: true } as any)
-      .eq("id", decisionRow.id);
-    if (autoFlagError) {
-      console.error("score: auto_sent update failed", autoFlagError);
-    }
-  }
 
   const { error: auditError } = await db.from("audit_log").insert({
     community_id: community.id,

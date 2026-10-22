@@ -266,6 +266,25 @@ Authorization: Bearer <BOT_API_TOKEN>
 - Returns match-only result—no evidence, no reporting community
 - Only checks `confirmed` entries
 
+## Auto mode
+
+A lead can turn Auto mode on per community at `/settings` (same `gk_lead` cookie as the queue). It is **off by default**.
+
+When Auto mode is on, scoring may send a reply with no extra click, and only in these cases:
+
+- **ask** — send the clarifying question (the scorer reason).
+- **accept with score ≥ 80** — send the welcome message.
+
+It **never** auto-sends:
+
+- a **decline**
+- any **blocklist hit** (`signals.blocklist_hit` or a `blocklist_match`)
+- a **web** application (no outbound channel)
+
+WhatsApp uses the Cloud API adapter. Discord follows the same channel path as `POST /api/channel/send` (logged, because the join-check bot does not DM applicants). Successful sends are written to `audit_log` with `auto=true`, `action='auto_send'`, and `details` `{application_id, decision, channel}` — no phone number. If the send fails, the failure is logged and the application stays in the queue. The queue header shows whether Auto mode is on, and an **auto-sent** badge marks items that were sent.
+
+`GET` and `PATCH /api/communities/:slug/settings` read and update `{ auto_mode }` with the service-role client. Both require the lead token.
+
 ## How Another Community Could Run It
 
 1. **Fork this repo** on GitHub
@@ -306,6 +325,7 @@ Authorization: Bearer <BOT_API_TOKEN>
 - `supabase/migrations/` – Database schema
   - `0001_init.sql` – Tables, RLS policies, seed communities
   - `0002_rules.sql` – Seed community rules from data/rules.md
+  - `0004_auto_mode.sql` – `communities.auto_mode` and `audit_log.auto`
 - `fixtures/` – Mock data for `/api/_mock/*` routes
 - `data/` – Fictional demo dataset (30 applicants, 2 communities, rules, expected decisions)
 - `docs/` – Build spec and handoff docs
