@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
+import { WhatsAppAdapter } from "@/lib/channels/whatsapp";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ application_id: string }> }) {
   try {
@@ -61,6 +62,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
       if (entry) {
         blocklist_entry_id = entry.id;
         blocklist_status = "confirmed";
+      }
+    }
+
+    if (decision === "decline" && application.channel === "whatsapp" && application.phone) {
+      try {
+        const whatsapp = new WhatsAppAdapter();
+        await whatsapp.sendReply(application.phone, "Sorry, we can't accept this application.");
+      } catch (e) {
+        console.error("Failed to send WhatsApp reply:", e);
       }
     }
 

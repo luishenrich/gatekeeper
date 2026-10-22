@@ -86,6 +86,54 @@ The shared blocklist lets communities warn each other about scammers without exp
    # Scores all 30 test applicants, shows accuracy and false-block count
    ```
 
+6. **Test WhatsApp webhook (optional):**
+   ```bash
+   npx tsx scripts/simulate_whatsapp.ts
+   # Simulates a WhatsApp message with correct signature, no real phone needed
+   ```
+
+## WhatsApp Intake Channel Setup
+
+Gatekeeper can accept applications via WhatsApp using the official Meta WhatsApp Cloud API (no third-party libraries).
+
+### Meta Business Setup
+
+1. **Create a Meta Business Account** at business.facebook.com
+2. **Create a WhatsApp Business App** in the Meta for Developers console
+3. **Add WhatsApp product** to your app
+4. **Get credentials:**
+   - `WHATSAPP_TOKEN`: Permanent access token (Generate in Settings → WhatsApp → API Setup)
+   - `WHATSAPP_PHONE_NUMBER_ID`: Phone number ID from the test number or your own number
+   - `WHATSAPP_APP_SECRET`: App secret from Settings → Basic
+   - `WHATSAPP_VERIFY_TOKEN`: Any random string you choose (used for webhook verification)
+   - `WHATSAPP_COMMUNITY_SLUG`: Which community receives WhatsApp applications
+
+5. **Configure webhook** in WhatsApp → Configuration:
+   - Callback URL: `https://your-domain.com/api/whatsapp/webhook`
+   - Verify token: Same as `WHATSAPP_VERIFY_TOKEN` above
+   - Subscribe to: `messages` field
+
+6. **Test with simulation script:**
+   ```bash
+   # Set WHATSAPP_APP_SECRET in .env.local
+   npx tsx scripts/simulate_whatsapp.ts
+   # Check /queue to see the scored application
+   ```
+
+### How It Works
+
+1. **User sends a WhatsApp message** to your WhatsApp Business number
+2. **Meta webhook calls** `POST /api/whatsapp/webhook` with the message
+3. **Gatekeeper scores** the application (same internal function as web API)
+4. **Auto-reply based on decision:**
+   - `accept` → "Thanks! Your application looks good, and a lead will confirm shortly."
+   - `ask` → Follow-up question from scorer's reason (e.g. "Missing info: which community do you run?")
+   - `decline` or blocklist hit → No auto-reply, goes to moderator queue
+5. **Moderator reviews** in `/queue` and makes final decision
+6. **If moderator declines** a WhatsApp application → Auto-sends "Sorry, we can't accept this application."
+
+All decisions land in the queue regardless of channel. The channel adapter interface (`lib/channels/`) is designed so Person B's Discord bot can implement the same pattern.
+
 ## API Documentation
 
 ### POST /api/score
