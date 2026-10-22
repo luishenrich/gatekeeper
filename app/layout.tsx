@@ -1,4 +1,5 @@
 import "./globals.css";
+import TopNav from "@/components/TopNav";
 
 export const metadata = {
   title: "Gatekeeper",
@@ -12,7 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="bg-white text-slate-900 antialiased">
+        <TopNav />
+        {children}
+      </body>
     </html>
   );
 }
