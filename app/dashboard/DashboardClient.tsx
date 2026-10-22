@@ -7,38 +7,21 @@ import {
   StatCard,
   type Decision,
 } from "@/components/decision-ui";
+import type { StatsResponse } from "@/lib/stats";
 
 const COMMUNITIES = [
   { slug: "london-agent-builders", name: "London Agent Builders" },
   { slug: "south-london-hack-nights", name: "South London Hack Nights" },
 ] as const;
 
-type RecentDecision = {
-  id: string;
-  name: string;
-  handle: string;
-  decision: Decision;
-  score: number;
-  reason: string;
-  created_at?: string;
-};
+function asDecision(v: string): Decision {
+  if (v === "accept" || v === "ask" || v === "decline") return v;
+  return "ask";
+}
 
-type Stats = {
-  community_slug: string;
-  community_name: string;
-  handled_today: number;
-  accepted: number;
-  asked: number;
-  declined: number;
-  scammers_stopped: number;
-  auto_sent_questions: number;
-  recent_decisions: RecentDecision[];
-};
-
-function formatSaved(handled: number): string {
-  const mins = handled * 5;
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
+function formatSaved(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
   if (h <= 0) return `${m} min`;
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
@@ -57,7 +40,7 @@ function relativeTime(iso?: string): string {
 
 export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
   const [community, setCommunity] = useState<string>(COMMUNITIES[0].slug);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [stats, setStats] = useState<StatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,7 +54,7 @@ export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
         { credentials: "include" }
       );
       if (!res.ok) throw new Error(`Stats failed (${res.status})`);
-      const data = (await res.json()) as Stats;
+      const data = (await res.json()) as StatsResponse;
       setStats(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load stats");
@@ -84,8 +67,6 @@ export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
   useEffect(() => {
     void load();
   }, [load]);
-
-  const handled = stats?.handled_today ?? 0;
 
   return (
     <main className="min-h-screen bg-white text-[17px] text-slate-900">
@@ -116,12 +97,6 @@ export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
         {error && (
           <div className="mt-6 rounded-xl border-2 border-rose-600 bg-rose-50 px-4 py-3 font-semibold text-rose-900">
             {error}
-            {!useMocks && (
-              <span className="mt-1 block font-semibold text-rose-800">
-                Real /api/stats is not available yet — set USE_MOCKS=true for the
-                demo fixture.
-              </span>
-            )}
           </div>
         )}
 
@@ -147,17 +122,17 @@ export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
               />
               <StatCard
                 label="Scammers stopped"
-                value={stats.scammers_stopped}
+                value={stats.blocklist_hits_cross_community}
                 hint="Blocklist hits across communities"
                 tone="blocklist"
               />
               <StatCard
                 label="Auto-sent questions"
-                value={stats.auto_sent_questions}
+                value={stats.auto_sent}
               />
               <StatCard
                 label="Time saved"
-                value={formatSaved(handled)}
+                value={formatSaved(stats.time_saved_minutes_estimate)}
                 hint="estimate · handled × 5 min"
               />
             </div>
@@ -174,18 +149,17 @@ export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
                   </Link>
                 </div>
                 <ul className="mt-4 divide-y-2 divide-slate-200 rounded-2xl border-2 border-slate-300">
-                  {(stats.recent_decisions || []).map((row) => (
-                    <li key={row.id}>
+                  {(stats.recent || []).map((row) => (
+                    <li key={row.application_id}>
                       <Link
                         href="/queue"
                         className="flex flex-wrap items-center gap-3 px-5 py-4 hover:bg-slate-50"
                       >
-                        <DecisionPill decision={row.decision} />
-                        <span className="font-bold">{row.name}</span>
-                        <span className="text-slate-600">{row.handle}</span>
+                        <DecisionPill decision={asDecision(row.decision)} />
+                        <span className="font-bold">{row.name || "—"}</span>
                         <span className="font-bold tabular-nums">{row.score}</span>
-                        <span className="min-w-0 flex-1 truncate text-slate-700">
-                          {row.reason}
+                        <span className="text-slate-600 capitalize">
+                          {row.channel}
                         </span>
                         <span className="ml-auto shrink-0 text-slate-600">
                           {relativeTime(row.created_at)}
@@ -193,7 +167,7 @@ export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
                       </Link>
                     </li>
                   ))}
-                  {(stats.recent_decisions || []).length === 0 && (
+                  {(stats.recent || []).length === 0 && (
                     <li className="px-5 py-8 text-center text-slate-600">
                       No decisions yet today.
                     </li>

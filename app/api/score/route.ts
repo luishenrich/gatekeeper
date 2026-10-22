@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { scoreApplicationInternal } from "@/lib/scoring";
+import { allowRequest, clientIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  if (!allowRequest(`score:${clientIp(req)}`)) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+
   try {
     const body = await req.json();
     const { community_slug, application } = body;
