@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ application_id: string }> }
-) {
+export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("Authorization");
   const token = process.env.BOT_API_TOKEN;
 

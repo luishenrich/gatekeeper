@@ -8,9 +8,9 @@ export async function POST(
     return NextResponse.json({ error: "Mocks disabled" }, { status: 503 });
   }
 
-  const { application_id } = await params;
+  await params;
   const body = await req.json();
-  const { decision, report_to_blocklist, evidence } = body;
+  const { report_to_blocklist } = body;
 
   const response: {
     ok: boolean;

@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { community_slug, application } = body;
+  const { application } = body;
 
   const mockResponse = {
     application_id: `A${Math.floor(Math.random() * 1000)}`,
