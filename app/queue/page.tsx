@@ -139,22 +139,22 @@ function apiBase(): string {
   return process.env.NEXT_PUBLIC_GATEKEEPER_API_URL || "";
 }
 
-function useMocks(): boolean {
+function isMockMode(): boolean {
   return process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
 }
 
 function decisionsPath(id: string): string {
-  const prefix = useMocks() ? "/api/_mock" : "/api";
+  const prefix = isMockMode() ? "/api/_mock" : "/api";
   return `${apiBase()}${prefix}/decisions/${id}`;
 }
 
 function queuePath(community: string): string {
-  const prefix = useMocks() ? "/api/_mock" : "/api";
+  const prefix = isMockMode() ? "/api/_mock" : "/api";
   return `${apiBase()}${prefix}/queue?community=${encodeURIComponent(community)}`;
 }
 
 function channelSendPath(): string {
-  const prefix = useMocks() ? "/api/_mock" : "/api";
+  const prefix = isMockMode() ? "/api/_mock" : "/api";
   return `${apiBase()}${prefix}/channel/send`;
 }
 
