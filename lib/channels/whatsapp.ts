@@ -68,14 +68,25 @@ export class WhatsAppAdapter implements ChannelAdapter {
             if (first) this.processedIds.delete(first);
           }
 
-          const waId = message.from;
+          const waId = String(message.from || "").replace(/^\+/, "");
           const text = message.text?.body || "";
           const context = message.context;
           const forwarded = !!(context?.forwarded || context?.frequently_forwarded);
+          const contacts: { wa_id?: string; profile?: { name?: string } }[] = value.contacts || [];
+          const contact =
+            contacts.find((c) => String(c.wa_id || "").replace(/^\+/, "") === waId) || contacts[0];
+          const profileName = String(contact?.profile?.name || "").trim();
+          const handleMatch = profileName.match(/@[A-Za-z0-9._-]+/);
+          const handle = handleMatch?.[0];
+          const name = handle
+            ? profileName.replace(handle, "").replace(/[()]/g, "").trim() || undefined
+            : profileName || undefined;
 
           return {
             sender_id: waId,
-            phone: `+${waId}`,
+            phone: waId ? `+${waId}` : undefined,
+            name,
+            handle,
             text,
             channel_ref: messageId,
             forwarded,

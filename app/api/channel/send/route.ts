@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase/server";
 import { WhatsAppAdapter } from "@/lib/channels/whatsapp";
-import { checkQueueAuth } from "@/lib/auth/queue-admin";
+import { requireLead } from "@/lib/auth/requireLead";
 import { auditPhone } from "@/lib/hmac";
 
 const NEUTRAL_FALLBACK =
   "Thanks for applying. A community lead will follow up if needed.";
 
 export async function POST(req: NextRequest) {
-  if (!checkQueueAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
     const body = await req.json();
     const { application_id, text } = body as {
@@ -34,6 +30,15 @@ export async function POST(req: NextRequest) {
 
     if (!application) {
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
+    }
+
+    const { data: community } = (await getServiceClient()
+      .from("communities")
+      .select("slug")
+      .eq("id", application.community_id)
+      .maybeSingle()) as { data: { slug: string } | null };
+    if (!(await requireLead(req, community?.slug || ""))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const channel = application.channel || "web";

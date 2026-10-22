@@ -134,7 +134,7 @@ async function callOnce(model: string, messages: any[], rf: RF, apiKey: string) 
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "X-Title": "Gatekeeper scorer",
+      "X-Title": "Greenlight scorer",
     },
     body: JSON.stringify(body),
   });

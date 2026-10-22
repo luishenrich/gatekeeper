@@ -1,11 +1,10 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import { BookOpenText, Cpu, ShieldCheck } from "lucide-react";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Card, PageHeader } from "@/components/ui";
 import { RulesMarkdown } from "@/components/rules/RulesMarkdown";
-import { matchesLeadToken } from "@/lib/auth/queue-admin";
+import { hasLeadPageAccess } from "@/lib/auth/requireLeadPage";
 import { PROMPT_VERSION } from "@/lib/scorer";
 import { getServiceClient } from "@/lib/supabase/server";
 import { communityName, DEFAULT_COMMUNITY, isCommunitySlug } from "@/lib/ui/communities";
@@ -39,8 +38,7 @@ async function loadRules(slug: string, name: string): Promise<Loaded> {
 }
 
 export default async function RulesPage({ searchParams }: { searchParams: Promise<{ community?: string }> }) {
-  const jar = await cookies();
-  if (!matchesLeadToken(jar.get("gk_lead")?.value)) {
+  if (!(await hasLeadPageAccess())) {
     redirect("/login?next=/rules");
   }
 

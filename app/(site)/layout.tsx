@@ -1,11 +1,9 @@
-import { cookies } from "next/headers";
 import { SiteNav } from "@/components/shell/SiteNav";
 import { SiteFooter } from "@/components/shell/SiteFooter";
-import { matchesLeadToken } from "@/lib/auth/queue-admin";
+import { hasLeadPageAccess } from "@/lib/auth/requireLeadPage";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const jar = await cookies();
-  const signedIn = matchesLeadToken(jar.get("gk_lead")?.value);
+  const signedIn = await hasLeadPageAccess();
   return (
     <div className="flex min-h-screen flex-col">
       <SiteNav signedIn={signedIn} />

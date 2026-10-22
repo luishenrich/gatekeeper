@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireLead } from "@/lib/auth/requireLead";
 import { getServiceClient } from "@/lib/supabase/server";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
 
@@ -24,6 +25,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
 
     if (!application) {
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
+    }
+
+    const { data: community } = (await getServiceClient()
+      .from("communities")
+      .select("slug")
+      .eq("id", application.community_id)
+      .maybeSingle()) as { data: { slug: string } | null };
+    if (!(await requireLead(req, community?.slug || ""))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await getServiceClient().from("decisions").insert({

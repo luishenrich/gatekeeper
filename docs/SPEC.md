@@ -1,4 +1,4 @@
-# Gatekeeper — build spec (draft, 22 Oct 2026)
+# Greenlight — build spec (draft, 22 Oct 2026)
 
 Goal: stop scammers getting into communities while letting real builders in fast. Demo-first; cut scope before risking a broken demo.
 
@@ -6,14 +6,14 @@ Goal: stop scammers getting into communities while letting real builders in fast
 - Next.js (App Router) + TypeScript, deployed on Vercel
 - Supabase: Postgres + RLS + Auth (magic link for moderators)
 - LLM scoring via server route (key in env, never in repo)
-- discord.js bot (official API) as a separate small Node process
+- Discord bot (experimental, not live) in `bot/`; not part of the demo
 - License: MIT. README with setup steps from the first commit.
 
 ## Modules (priority order)
 1. **Applicant scorer** (must-have): input = community rules (markdown) + application (name, handle, phone, email, github, text). Output = accept | ask | decline, score 0-100, reason citing rule numbers. Signals: rules fit (LLM), StopForumSpam (email, cached), GitHub API (account age, repos), spam-text classifier, shared-blocklist hit.
 2. **Shared blocklist** (must-have): table `blocklist_entries(id, community_id, phone_hmac, handle_norm_hmac, email_hmac, evidence, reporter, status pending|confirmed|appealed|cleared, created_at)`. HMAC-SHA256 with server secret (never a plain hash). Handle normalisation: lowercase, strip `@ . _ -` and trailing digits. RLS: a community sees its own pending entries; everyone sees confirmed ones as match-only (no evidence leak). Appeal route = public form that sets status appealed.
 3. **Review queue** (must-have): `ask` decisions plus blocklist matches, with approve/decline buttons and the reason shown.
-4. **Discord mod bot** (nice-to-have): flags scam-pattern messages, drafts a removal message, posts it to a mod channel with a button; the human presses send.
+4. **Discord bot** (experimental, not live): not part of the demo. The code remains in `bot/`.
 
 ## Data model
 communities, rules, applications, decisions(application_id, decision, score, reason, signals jsonb), blocklist_entries, appeals, audit_log.

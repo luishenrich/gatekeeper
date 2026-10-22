@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase/server";
-import { checkQueueAuth } from "@/lib/auth/queue-admin";
+import { requireLead } from "@/lib/auth/requireLead";
 import { hashPhone } from "@/lib/hmac";
 
 type AppRow = {
@@ -34,18 +34,18 @@ function otherCommunityName(slug: string): string {
 }
 
 export async function GET(req: NextRequest) {
-  if (!checkQueueAuth(req)) {
+  const community = req.nextUrl.searchParams.get("community");
+  if (!community) {
+    return NextResponse.json(
+      { error: "Missing community query param" },
+      { status: 400 }
+    );
+  }
+  if (!(await requireLead(req, community))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const community = req.nextUrl.searchParams.get("community");
-    if (!community) {
-      return NextResponse.json(
-        { error: "Missing community query param" },
-        { status: 400 }
-      );
-    }
 
     const { data: communityRecord } = (await getServiceClient()
       .from("communities")

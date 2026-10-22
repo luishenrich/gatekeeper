@@ -1,6 +1,6 @@
-# Gatekeeper
+# Greenlight
 
-Stop scammers getting into communities while letting real builders in fast. Gatekeeper scores applications against community rules using AI, maintains a shared blocklist across communities (HMAC-hashed for privacy), and provides a review queue for moderators. Built for hackathon Track 1 (community infrastructure).
+Stop scammers getting into communities while letting real builders in fast. Greenlight scores applications against community rules using AI, maintains a shared blocklist across communities (HMAC-hashed for privacy), and provides a review queue for moderators. Built for hackathon Track 1 (community infrastructure).
 
 ## Architecture
 
@@ -9,7 +9,7 @@ Stop scammers getting into communities while letting real builders in fast. Gate
 - **LLM scoring** – Evaluates applications against community rules via OpenRouter (recommended model: `openai/gpt-6-luna` for best accuracy, 29/30 on test set)
 - **Shared blocklist** – HMAC-SHA256 hashed phone/email/handle, RLS-protected, match-only cross-community
 - **Multiple signals** – StopForumSpam, GitHub account age/repos, Devpost projects, spam text classifier, all with 2s timeouts
-- **Discord bot** (optional) – Checks new joins against blocklist
+- Discord bot (experimental, not live)
 
 ## How the Shared Blocklist Protects Privacy
 
@@ -21,7 +21,7 @@ The shared blocklist lets communities warn each other about scammers without exp
 
 2. **Handle normalization** – Before hashing, handles are normalized (lowercase, strip `@._-` and trailing digits) so `@cryptomax_alpha` and `@cryptomax_alpha1` produce the same hash and match.
 
-3. **Match-only checks** – When the Discord bot or another community checks a new applicant, the API returns only `{ match: true/false, matched_on: ["phone"|"handle"|"email"], status, reported_at }`. The reporting community's identity and the evidence are never shared.
+3. **Match-only checks** – When another community checks a new applicant, the API returns only `{ match: true/false, matched_on: ["phone"|"handle"|"email"], status, reported_at }`. The reporting community's identity and the evidence are never shared.
 
 4. **RLS (Row Level Security)** – Each community sees only its own blocklist entries in full (with evidence). Cross-community matching happens server-side via the service role; moderators never query other communities' entries directly.
 
@@ -94,7 +94,7 @@ The shared blocklist lets communities warn each other about scammers without exp
 
 ## WhatsApp Intake Channel Setup
 
-Gatekeeper can accept applications via WhatsApp using the official Meta WhatsApp Cloud API (no third-party libraries).
+Greenlight can accept applications via WhatsApp using the official Meta WhatsApp Cloud API (no third-party libraries).
 
 ### Meta Business Setup
 
@@ -124,7 +124,7 @@ Gatekeeper can accept applications via WhatsApp using the official Meta WhatsApp
 
 1. **User sends a WhatsApp message** to your WhatsApp Business number
 2. **Meta webhook calls** `POST /api/whatsapp/webhook` with the message
-3. **Gatekeeper scores** the application (same internal function as web API)
+3. **Greenlight scores** the application (same internal function as web API)
 4. **Auto-reply based on decision:**
    - `accept` → "Thanks! Your application looks good, and a lead will confirm shortly."
    - `ask` → Follow-up question from scorer's reason (e.g. "Missing info: which community do you run?")
@@ -132,7 +132,7 @@ Gatekeeper can accept applications via WhatsApp using the official Meta WhatsApp
 5. **Moderator reviews** in `/queue` and makes final decision
 6. **If moderator declines** a WhatsApp application → Auto-sends "Sorry, we can't accept this application."
 
-All decisions land in the queue regardless of channel. The channel adapter interface (`lib/channels/`) is designed so Person B's Discord bot can implement the same pattern.
+All decisions land in the queue. WhatsApp uses the channel adapter in `lib/channels/`.
 
 ## API Documentation
 
@@ -234,7 +234,7 @@ Record a moderator's final decision and optionally report to the shared blocklis
 
 ### POST /api/blocklist/check
 
-Check if identifiers match the shared blocklist (for Discord bots or external tools).
+Check if identifiers match the shared blocklist.
 
 **Headers:**
 ```
@@ -281,7 +281,7 @@ It **never** auto-sends:
 - any **blocklist hit** (`signals.blocklist_hit` or a `blocklist_match`)
 - a **web** application (no outbound channel)
 
-WhatsApp uses the Cloud API adapter. Discord follows the same channel path as `POST /api/channel/send` (logged, because the join-check bot does not DM applicants). Successful sends are written to `audit_log` with `auto=true`, `action='auto_send'`, and `details` `{application_id, decision, channel}` — no phone number. If the send fails, the failure is logged and the application stays in the queue. The queue header shows whether Auto mode is on, and an **auto-sent** badge marks items that were sent.
+WhatsApp uses the Cloud API adapter. Successful sends are written to `audit_log` with `auto=true`, `action='auto_send'`, and `details` `{application_id, decision, channel}` — no phone number. If the send fails, the failure is logged and the application stays in the queue. The queue header shows whether Auto mode is on, and an **auto-sent** badge marks items that were sent.
 
 `GET` and `PATCH /api/communities/:slug/settings` read and update `{ auto_mode }` with the service-role client. Both require the lead token.
 
@@ -344,7 +344,16 @@ The scorer has been tested with multiple models. For production:
 - Very fast (~800ms)
 - Good for high-volume communities
 
-Set via `SCORER_MODEL` environment variable.
+Set via `SCORER_MODEL` environment variable. The code default is `typesafe/jev-router`.
+
+## Datasets and attribution
+
+The 30-applicant demo set is fictional. The 200-applicant eval set adds scrubbed spam texts to fictional applications:
+
+- UCI SMS Spam Collection, CC BY 4.0, Almeida & Hidalgo (2011), https://doi.org/10.24432/C5CC84 (15 scrubbed texts used).
+- thehamkercat/telegram-spam-ham, WTFPL (12 texts used).
+
+All identities are fictional (Ofcom drama numbers, example.com). Sources, licences, and class counts are in [data/DATASETS.md](data/DATASETS.md).
 
 ## License
 

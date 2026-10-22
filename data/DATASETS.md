@@ -1,0 +1,81 @@
+# Greenlight evaluation data: sources and licences
+
+Files:
+- `applicants_large.json` / `applicants_large.csv`: 200 labelled applications. Same schema as `applicants.json`, plus a `source` field.
+- `expected_decisions_large.csv` (`id,expected_decision,reason`)
+- `scripts/build_large.py`: a deterministic generator (seed 42) that rebuilds the files above.
+- `eval_large_results.json`: scorer results for the large set.
+
+## Class counts (applicants_large.json)
+
+| category (expected_decision) | community 1 | community 2 | total | share |
+|---|---|---|---|---|
+| good_fit (accept) | 65 | 15 | 80 | 40% |
+| borderline (ask) | 38 | 12 | 50 | 25% |
+| scammer (decline), first-time | 31 | 19 | 50 | 25% |
+| bot (decline) | 4 | 6 | 10 | 5% |
+| scammer cross-community repeat (decline, `cross_group_dup_of` set) | 0 | 10 | 10 | 5% |
+| **total** | | | **200** | |
+
+Expected decisions: 80 accept, 50 ask, 70 decline.
+
+Text provenance (`source` field): 163 synthetic, 25 `ucirvine/sms_spam` (15 unique texts; 10 of those records are cross-community repeats that reuse a text), 12 `thehamkercat/telegram-spam-ham`.
+
+## Identities are always fictional
+No record contains a real person's name, phone number, email address or handle.
+- Names are invented by combining two lists in `build_large.py`.
+- Phones use the Ofcom drama range `+44 7700 900000–900999`.
+- Emails end in `@example.com`.
+- Handles, GitHub and LinkedIn slugs are invented (`-demo`).
+
+Real texts were also scrubbed:
+- Any run of 7 or more digits (premium-rate or mobile numbers) was replaced with an Ofcom drama number.
+- URLs and domains became `prize-claim.example`.
+- Emails became `claims@example.com`.
+- "Mr/Mrs X" names became `[name removed]`.
+- Texts that contained `@handles` or `t.me` links were excluded.
+
+## Sources used in the data
+
+| Source | URL | Licence | Size | Redistributable in an MIT repo? | Used |
+|---|---|---|---|---|---|
+| UCI SMS Spam Collection (Almeida & Hidalgo 2011), via the HF mirror `ucirvine/sms_spam` | https://archive.ics.uci.edu/dataset/228/sms+spam+collection, https://huggingface.co/datasets/ucirvine/sms_spam | **CC BY 4.0**. The UCI page was checked on 2026-10-22. The HF card says "unknown", so the UCI licence applies. | 5,574 SMS (747 spam) | Yes, with attribution: Almeida, T. & Hidalgo, J. (2011). SMS Spam Collection. UCI ML Repository. https://doi.org/10.24432/C5CC84 | 15 prize/claim spam texts as scammer application text (rule 5 phishing) |
+| Telegram spam/ham, `thehamkercat/telegram-spam-ham` | https://huggingface.co/datasets/thehamkercat/telegram-spam-ham | **WTFPL** (permissive) per the HF card | 20,348 rows | Yes. Caveat: the HF card does not document provenance, and the first rows look like old email spam taken from other corpora. | 12 English investment, "earn fast" and money-mule spam texts (rows 15000–15099, 18000–18099 and 19000–19099 of the train split) |
+
+## Reviewed but not used (licence noted for future work)
+
+| Source | URL | Licence (HF card / site) | Size | Redistribute? | Notes |
+|---|---|---|---|---|---|
+| FredZhang7/all-scam-spam | https://huggingface.co/datasets/FredZhang7/all-scam-spam | Apache-2.0 (card) | 10K–100K | Card says yes, but it aggregates upstream sets, so check them | Not used because of time |
+| ealvaradob/phishing-dataset | https://huggingface.co/datasets/ealvaradob/phishing-dataset | Apache-2.0 (card) | 10K–100K | Card says yes, but it is an aggregate | Phishing emails/URLs/SMS |
+| mshenoda/spam-messages | https://huggingface.co/datasets/mshenoda/spam-messages | MIT (card) | 10K–100K | Yes | |
+| Deysi/spam-detection-dataset | https://huggingface.co/datasets/Deysi/spam-detection-dataset | Apache-2.0 (card) | 10K–100K | Yes | |
+| redasers/difraud | https://huggingface.co/datasets/redasers/difraud | MIT (card) | 10K–100K | Yes | Uses a loading script, so the HF viewer can't preview it |
+| SetFit/enron_spam | https://huggingface.co/datasets/SetFit/enron_spam | No licence on the card | 10K–100K | **No**. Reference it through a fetch script only. | |
+| StopForumSpam public lists (toxic domains/usernames, listed emails/IPs) | https://www.stopforumspam.com/downloads | No explicit open licence on the downloads page. The lists hold real emails and IPs, which are personal data. | Millions | **No.** Query the API at runtime and don't commit list contents. | `sfs_samples.json` only holds harmless test lookups |
+| TwiBot-22 / Botometer bot repository (social bot accounts) | https://twibot22.github.io/, https://botometer.osome.iu.edu/bot-repository/ | Terms not verified in this run. Both hold real Twitter account IDs/profiles. | 1M+ users (TwiBot-22) | **No.** Don't commit; reference only. | No bot records here come from these. All bot texts are synthetic. |
+
+## How the synthetic parts were made (clearly SYNTHETIC)
+All good-fit, borderline and bot records, and 23 of the 50 first-time scammer records (`source: "synthetic"`), were written for this project and generated by `scripts/build_large.py`:
+- **Good fit, community 1 (65).** Each record combines:
+  - one of 24 hand-written agent projects, each with its own "what I can give back"
+  - one of 15 roles
+  - one of 24 London neighbourhoods
+  - one of 7 sentence frames
+
+  About 70% have a GitHub slug and the rest a LinkedIn slug. Expected decision is accept, under rules 1–3.
+- **Good fit, community 2 (15).** Organisers of named, fictional South London meetups who give a member count, so they answer the screening question (C2 rules 1–2).
+- **Borderline (50).** 50 hand-written, distinct texts:
+  - vague or buzzword applications (rule 2)
+  - not building yet (rule 1)
+  - remote or outside London (rule 3)
+  - sales, recruiter, VC or marketing roles (rule 4)
+  - community-2 applicants who don't name a community or who push paid promo (C2 rules 1–3)
+- **Scammers (23 synthetic).** Hand-written examples of every rule-5 pattern: crypto/forex guaranteed returns, fake recruiters asking for passport or bank details, URL-shortener link spam, admin impersonation and phishing, money mules, advance-fee scams and recovery scams. Link paths are placeholders (`bit.ly/xxxx-…`, `*.example.com`).
+- **Bots (10).** Copy-paste repeats, unfilled templates, LLM-boilerplate texts and numeric handles (rule 5, bot-generated).
+- **Cross-community repeats (10).** For 10 community-1 scammers, a community-2 record with the **same phone**, a **handle variant** (`_`→`.`, `1`/`_uk`/`x` suffix) and the same or a lightly prefixed text, with `cross_group_dup_of` pointing to the original ID.
+
+Caveats:
+- Good-fit texts are combinatorial, so phrasing repeats. Treat them as reasonable but not human-written variety.
+- Some real SMS prize spam (2003–2011) reads dated.
+- The label "decline" for bot-like LLM boilerplate follows rule 5. The scorer prompt itself tells the model to prefer "ask" for generic-but-human text, so expect disagreement on that slice.

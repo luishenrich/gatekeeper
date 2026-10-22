@@ -2,7 +2,28 @@ import { readFileSync } from "node:fs";
 import { scoreApplication, PROMPT_VERSION, type Verdict } from "../lib/scorer";
 
 const DATA = process.cwd() + "/data";
-const SLUGS: Record<number, string> = { 1: "london-agent-builders", 2: "south-london-hack-nights" };
+const SLUGS: Record<string, string> = { "1": "london-agent-builders", "2": "south-london-hack-nights" };
+
+function toScorerApplication(row: any) {
+  const text = row.application_text ?? row.application?.text ?? row.text;
+  const community_slug = row.community_slug ?? SLUGS[String(row.community_applied)];
+  if (!text || !community_slug) {
+    throw new Error(
+      `Applicant ${row.id ?? "?"} is missing application_text or community_applied (got community_applied=${row.community_applied})`,
+    );
+  }
+  return {
+    name: row.name,
+    handle: row.handle,
+    phone: row.phone,
+    email: row.email,
+    github: row.github,
+    linkedin: row.linkedin,
+    text,
+    community_slug,
+  };
+}
+
 const LABELS: Verdict[] = ["accept", "ask", "decline"];
 const CONCURRENCY = Number(process.env.EVAL_CONCURRENCY || 5);
 
@@ -31,7 +52,21 @@ async function pool<T, R>(items: T[], n: number, fn: (t: T) => Promise<R>): Prom
   return out;
 }
 
+const REQUIRED_SCORER_ENV = ["OPENROUTER_API_KEY"];
+
+function missingScorerEnv(): string[] {
+  return REQUIRED_SCORER_ENV.filter((name) => !process.env[name]?.trim());
+}
+
 async function main() {
+  const missing = missingScorerEnv();
+  if (missing.length) {
+    console.error(
+      `Missing environment variable(s) required to call the live scorer: ${missing.join(", ")}`,
+    );
+    process.exit(1);
+  }
+
   const model = process.env.SCORER_MODEL || "typesafe/jev-router";
   const rulesMd = readFileSync(`${DATA}/rules.md`, "utf8");
   const applicants: any[] = JSON.parse(readFileSync(`${DATA}/applicants.json`, "utf8"));
@@ -39,10 +74,7 @@ async function main() {
 
   const t0 = Date.now();
   const results = await pool(applicants, CONCURRENCY, async (a) => {
-    const app = {
-      name: a.name, handle: a.handle, phone: a.phone, email: a.email, github: a.github, linkedin: a.linkedin,
-      text: a.application_text, community_slug: SLUGS[a.community_applied],
-    };
+    const app = toScorerApplication(a);
     const exp = expected.get(a.id)?.expected_decision as Verdict;
     try {
       const r = await scoreApplication(rulesMd, app);

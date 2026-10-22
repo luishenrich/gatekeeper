@@ -18,9 +18,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: "ok" }, { status: 200 });
     }
 
-    const communitySlug = process.env.WHATSAPP_COMMUNITY_SLUG || "london-agent-builders";
+    const requested = req.nextUrl.searchParams.get("community");
+    const known =
+      requested === "london-agent-builders" || requested === "south-london-hack-nights";
+    const communitySlug = known
+      ? requested
+      : process.env.WHATSAPP_COMMUNITY_SLUG || "london-agent-builders";
 
     await scoreApplicationInternal(communitySlug, {
+      name: message.name,
       phone: message.phone,
       handle: message.handle,
       text: message.text,

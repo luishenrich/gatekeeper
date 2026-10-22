@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "node lib/hmac.test.js",
-    "eval": "npx tsx scripts/eval.ts",
+    "eval": "npx tsx --conditions=react-server scripts/eval.ts",
     "seed-demo": "npx tsx scripts/seed-demo.ts"
   },
   "dependencies": {

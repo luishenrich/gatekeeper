@@ -13,7 +13,7 @@ if (!token || !clientId || !guildId) {
 const commands = [
   new SlashCommandBuilder()
     .setName("gatekeeper")
-    .setDescription("Gatekeeper moderation helpers")
+    .setDescription("Greenlight moderation helpers")
     .addSubcommand((sub) =>
       sub
         .setName("check")

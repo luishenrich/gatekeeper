@@ -1,4 +1,6 @@
-# Gatekeeper: handoff for Person B (UI + Discord bot)
+# Greenlight: handoff for Person B
+
+Discord bot (experimental, not live). The demo is WhatsApp-only.
 
 Hackathon: Grok Bot Community Engineering London, Thu 22 Oct 2026. **Code freeze 21:50 London time.** Top-5 live demos at 22:20, 3 min each.
 Track 1 "Gatekeeper": review applications, keep scammers out, share a blocklist across communities. Must be open source (public GitHub repo, MIT).
@@ -10,7 +12,7 @@ Community leads review applications by hand, and a scammer kicked from one group
 
 ## Who owns what
 - **Person A (Luis):** Supabase schema + RLS, HMAC/normalisation, scorer, all `/api/*` routes, the eval page.
-- **Person B (you):** the review queue UI (Next.js) with the report-to-blocklist toggle, the discord.js join-check bot, and the WhatsApp 1:1 channel (official Cloud API) behind the shared `ChannelAdapter`.
+- **Person B (you):** the review queue UI (Next.js) with the report-to-blocklist toggle, and the WhatsApp 1:1 channel (official Cloud API) behind the shared `ChannelAdapter`.
 - **Scope note:** WhatsApp is **1:1 applications only**. The official Cloud API can't moderate groups, so don't promise group kicks or scans on WhatsApp.
 - **Human in the loop:** no reply goes to an applicant on any channel until the lead clicks in the queue. Decline replies especially are drafted, shown in the queue, and only sent on click.
 - **Rule:** B never computes HMACs and never writes to `blocklist_entries` directly. Everything goes through A's API routes, because the HMAC secret stays on the server.
@@ -50,7 +52,7 @@ POST /api/whatsapp/webhook  + GET verify (owned by B)
   inbound 1:1 text -> ChannelAdapter.toApplication() -> POST /api/score -> stored with channel='whatsapp'
   auto-acknowledgement allowed ONLY as a fixed neutral text ("Thanks, a moderator will review your application"), no verdict
 
-POST /api/blocklist/check                (used by the Discord bot and the WhatsApp intake)
+POST /api/blocklist/check                (used by the WhatsApp intake and external tools)
   headers: Authorization: Bearer ${BOT_API_TOKEN}
   body: { community_slug, handle?, email?, phone? }
   200:  { match: boolean, matched_on?: ["handle"|...], status?: "confirmed", reported_at?: string }

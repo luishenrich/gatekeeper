@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { matchesLeadToken } from "@/lib/auth/queue-admin";
+import { hasLeadPageAccess } from "@/lib/auth/requireLeadPage";
 import LoginForm from "./LoginForm";
 import { safeNext } from "./safe-next";
 
@@ -16,8 +15,7 @@ export default async function LoginPage({
   const params = await searchParams;
   const next = safeNext(params.next);
 
-  const jar = await cookies();
-  if (matchesLeadToken(jar.get("gk_lead")?.value)) {
+  if (await hasLeadPageAccess()) {
     redirect(next);
   }
 

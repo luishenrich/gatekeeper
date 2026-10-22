@@ -1,15 +1,13 @@
 import { Suspense } from "react";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { matchesLeadToken } from "@/lib/auth/queue-admin";
+import { hasLeadPageAccess } from "@/lib/auth/requireLeadPage";
 import SettingsClient, { SettingsSkeleton } from "./SettingsClient";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
-  const jar = await cookies();
-  if (!matchesLeadToken(jar.get("gk_lead")?.value)) {
+  if (!(await hasLeadPageAccess())) {
     redirect("/login?next=/settings");
   }
 

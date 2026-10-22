@@ -1,6 +1,7 @@
 export interface InboundMessage {
   sender_id: string;
   phone?: string;
+  name?: string;
   handle?: string;
   text: string;
   channel_ref?: string;

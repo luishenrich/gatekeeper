@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { matchesLeadToken } from "@/lib/auth/queue-admin";
+import { hasLeadPageAccess } from "@/lib/auth/requireLeadPage";
 import DashboardClient, { DashboardSkeleton } from "./DashboardClient";
 import { BENCHMARK } from "@/lib/ui/benchmark";
 
@@ -9,8 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Dashboard" };
 
 export default async function DashboardPage() {
-  const jar = await cookies();
-  if (!matchesLeadToken(jar.get("gk_lead")?.value)) {
+  if (!(await hasLeadPageAccess())) {
     redirect("/login?next=/dashboard");
   }
 

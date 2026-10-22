@@ -49,7 +49,7 @@ export async function checkStopForumSpam(email?: string | null, username?: strin
   return withTimeout(
     cached(key, ttl, async () => {
       const res = await fetch(`https://api.stopforumspam.org/api?${params}`, {
-        headers: { "User-Agent": "Gatekeeper/1.0" },
+        headers: { "User-Agent": "Greenlight/1.0" },
       });
       if (!res.ok) throw new Error(`SFS ${res.status}`);
       const data = await res.json();
@@ -80,7 +80,7 @@ export async function checkGitHub(username?: string | null): Promise<GitHubResul
     cached(key, ttl, async () => {
       const res = await fetch(`https://api.github.com/users/${cleanUsername}`, {
         headers: {
-          "User-Agent": "Gatekeeper/1.0",
+          "User-Agent": "Greenlight/1.0",
           Accept: "application/vnd.github.v3+json",
         },
       });
@@ -110,7 +110,7 @@ export async function checkDevpost(handle?: string | null): Promise<DevpostResul
     cached(key, ttl, async () => {
       const res = await fetch(`https://devpost.com/software/search?query=${encodeURIComponent(cleanHandle)}`, {
         headers: {
-          "User-Agent": "Gatekeeper/1.0",
+          "User-Agent": "Greenlight/1.0",
           Accept: "application/json",
         },
       });

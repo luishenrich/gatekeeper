@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { matchesLeadToken } from "@/lib/auth/queue-admin";
+import { hasLeadPageAccess } from "@/lib/auth/requireLeadPage";
 import QueueClient from "@/components/queue/QueueClient";
 import { QueueListSkeleton } from "@/components/queue/QueueList";
 import { QueueDetailSkeleton } from "@/components/queue/QueueDetail";
@@ -28,8 +27,7 @@ function QueueFallback() {
 }
 
 export default async function QueuePage() {
-  const jar = await cookies();
-  if (!matchesLeadToken(jar.get("gk_lead")?.value)) {
+  if (!(await hasLeadPageAccess())) {
     redirect("/login?next=/queue");
   }
   const useMocks = process.env.USE_MOCKS === "true";

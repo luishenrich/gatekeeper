@@ -46,9 +46,9 @@ async function postFlag(
   const matchedOn = (result.matched_on ?? ["unknown"]).join(", ");
   const embed = new EmbedBuilder()
     .setColor(0xdc2626)
-    .setTitle("Gatekeeper blocklist match")
+    .setTitle("Greenlight blocklist match")
     .setDescription(
-      `⚠️ <@${member.user.id}> matched the shared Gatekeeper blocklist on **${matchedOn}** (status **${result.status ?? "confirmed"}**, reported ${formatDate(result.reported_at)}).`
+      `⚠️ <@${member.user.id}> matched the shared Greenlight blocklist on **${matchedOn}** (status **${result.status ?? "confirmed"}**, reported ${formatDate(result.reported_at)}).`
     )
     .addFields(
       { name: "Handle", value: member.user.username, inline: true },
@@ -168,7 +168,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
         });
         return;
       }
-      await member.kick("Gatekeeper: human-confirmed blocklist removal");
+      await member.kick("Greenlight: human-confirmed blocklist removal");
       console.log(`[kick] success ${userId}`);
       await interaction.update({
         content: `Kicked <@${userId}> by <@${interaction.user.id}>.`,
