@@ -60,7 +60,7 @@ The shared blocklist lets communities warn each other about scammers without exp
    - `BLOCKLIST_HMAC_SECRET` – Secret for HMAC hashing (generate a random string, keep it safe)
    - `BOT_API_TOKEN` – Bearer token for bot API access
    - `GATEKEEPER_API_URL` – Your deployed API URL (or http://localhost:3000 for dev)
-   - `USE_MOCKS=true` – Enable mock API routes for testing
+   - `USE_MOCKS=true` – Server-only flag for the mock routes and the queue page. The page receives it as a prop. Do not set `NEXT_PUBLIC_USE_MOCKS`.
    - `OPENROUTER_API_KEY` – OpenRouter API key for LLM scoring
    - `SCORER_MODEL` – Model to use (recommended: `openai/gpt-6-luna` for best accuracy; default: `typesafe/jev-router`)
    - `DISCORD_BOT_TOKEN` – Discord bot token (optional)
@@ -291,7 +291,7 @@ Authorization: Bearer <BOT_API_TOKEN>
   - `api/score/` – Score applicant endpoint (real scoring with all signals)
   - `api/decisions/` – Moderator decision endpoint
   - `api/blocklist/` – Blocklist check endpoint (bot API)
-  - `api/_mock/` – Mock API routes for testing (active when `USE_MOCKS=true`)
+  - `api/mock/` – Mock API routes (active when server `USE_MOCKS=true`; `/api/_mock/*` rewrites here)
 - `lib/` – Shared utilities
   - `scorer.ts` – OpenRouter LLM scorer (prompt v3, 29/30 accuracy on test set)
   - `spam-classifier.ts` – Deterministic scam-text classifier
