@@ -56,7 +56,8 @@ POST /api/blocklist/check                (used by the Discord bot and the WhatsA
   200:  { match: boolean, matched_on?: ["handle"|...], status?: "confirmed", reported_at?: string }
   (no evidence and no reporting community's private notes: match-only, per SPEC)
 ```
-Until A's routes are live, **mock them** with `/api/_mock/*` returning the shapes above. Use the fictional data in `/workspace/gatekeeper_data`.
+Until A's routes are live, **mock them** with `/api/mock/*` returning the shapes above. Use the fictional data in `/workspace/gatekeeper_data`.
+(Note: `/api/mock/*` not `/api/_mock/*` — Next.js treats `_folders` as private routing, so the actual URLs are `/api/mock/*` with a rewrite from `/_mock/` in `next.config.ts`.)
 
 ### Env vars B needs
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `GATEKEEPER_API_URL`, `BOT_API_TOKEN`, `DISCORD_BOT_TOKEN`, `DISCORD_MOD_CHANNEL_ID`, `COMMUNITY_SLUG`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`, `OPENROUTER_API_KEY` (A's). Never commit any of them, and ship a `.env.example` instead.
@@ -91,11 +92,11 @@ Until A's routes are live, **mock them** with `/api/_mock/*` returning the shape
 > - Buttons: **Accept** and **Decline**. Decline opens an inline panel with a **"Report to shared blocklist"** toggle (off by default) and an evidence textarea that's required when the toggle is on. On submit, call `POST /api/decisions/:application_id` with `{ decision, report_to_blocklist, evidence }` and show the returned `blocklist_status`. If a `reply_draft` comes back, show it in an editable box with a **Send reply via <channel>** button that calls `POST /api/channel/send`. Nothing is sent to the applicant without that click. Then remove the card.
 > - Add a community switcher in the header (`london-agent-builders` / `south-london-hack-nights`), so the demo can show the second community seeing the hit.
 > - No raw phone or email in the UI. Show them masked (`+44 •••• 21`).
-> - Add a `/api/_mock/*` set implementing exactly the shapes in the contract, behind `USE_MOCKS=true`.
+> - Add a `/api/mock/*` set implementing exactly the shapes in the contract, behind `USE_MOCKS=true`.
 > Keep it to as few files as possible. No auth gating yet, since Person A adds the Supabase magic link.
 
 ### B3 · Cursor agent (code): wire queue to real API, after A says routes are live (~20:00)
-> Switch `/queue` from the mocks to the real routes in `HANDOFF_PERSON_B.md`: read with the Supabase JS client (`@supabase/ssr`, signed-in moderator, RLS does the filtering), and write via `POST /api/decisions/:application_id`. Keep `USE_MOCKS=true` working as a fallback for the demo. Add loading and error states, plus a toast showing the blocklist status after a report. Don't touch Person A's files under `app/api/` except `_mock`.
+> Switch `/queue` from the mocks to the real routes in `HANDOFF_PERSON_B.md`: read with the Supabase JS client (`@supabase/ssr`, signed-in moderator, RLS does the filtering), and write via `POST /api/decisions/:application_id`. Keep `USE_MOCKS=true` working as a fallback for the demo. Add loading and error states, plus a toast showing the blocklist status after a report. Don't touch Person A's files under `app/api/` except `mock`.
 
 ### B4 · Cursor agent (code): Discord join-check bot, first item to cut
 > Create `bot/` as a standalone Node 20 + TypeScript package using discord.js v14.

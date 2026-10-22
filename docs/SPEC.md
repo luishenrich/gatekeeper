@@ -38,7 +38,7 @@ Fictional demo data from /workspace/gatekeeper_data (30 applicants, 2 communitie
 - `POST /api/score` with body `{ community_slug, application: { name, handle, phone, email, github, text } }`, returns `{ application_id, decision, score, reason, signals: { rules_fit, stopforumspam, github, spam_text, blocklist_hit }, blocklist_match? }`
 - `POST /api/decisions/:application_id` with body `{ decision: "accept"|"decline", report_to_blocklist, evidence? }`, returns `{ ok, blocklist_entry_id?, blocklist_status? }`
 - `POST /api/blocklist/check` with header `Authorization: Bearer BOT_API_TOKEN` and body `{ community_slug, handle?, email?, phone? }`, returns match-only `{ match, matched_on?, status?, reported_at? }` with no evidence
-- `/api/_mock/*` stubs with identical shapes behind `USE_MOCKS=true`, so Person B can build until about 20:00
+- `/api/mock/*` stubs with identical shapes behind `USE_MOCKS=true`, so Person B can build until about 20:00 (Note: `_folders` are non-routable in Next.js, so actual URLs are `/api/mock/*` with a rewrite from `/_mock/`)
 - Only the server computes HMACs and writes `blocklist_entries`.
 
 ## Repo layout
