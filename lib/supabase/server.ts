@@ -1,11 +1,14 @@
 import "server-only";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-let _supabaseServer: ReturnType<typeof createClient> | null = null;
+let client: SupabaseClient | null = null;
 
-export function getSupabaseServer() {
-  if (_supabaseServer) return _supabaseServer;
-  
+/** Lazy service-role client. Call this and chain on the return value.
+ *  A Proxy around the client breaks `.from().select()` because the
+ *  method loses its `this` binding. */
+export function getServiceClient(): SupabaseClient {
+  if (client) return client;
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -13,18 +16,12 @@ export function getSupabaseServer() {
     throw new Error("Missing Supabase environment variables");
   }
 
-  _supabaseServer = createClient(supabaseUrl, supabaseServiceKey, {
+  client = createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
     },
   });
 
-  return _supabaseServer;
+  return client;
 }
-
-export const supabaseServer = new Proxy({} as ReturnType<typeof createClient>, {
-  get(_, prop) {
-    return (getSupabaseServer() as any)[prop];
-  },
-});

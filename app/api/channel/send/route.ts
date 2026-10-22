@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase/server";
+import { getServiceClient } from "@/lib/supabase/server";
 import { WhatsAppAdapter } from "@/lib/channels/whatsapp";
 
 const NEUTRAL_FALLBACK =
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { data: application }: { data: any | null } = await supabaseServer
+    const { data: application }: { data: any | null } = await getServiceClient()
       .from("applications")
       .select("id, community_id, channel, channel_user_id, phone")
       .eq("id", application_id)
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Unsupported channel: ${channel}` }, { status: 400 });
     }
 
-    await supabaseServer.from("audit_log").insert({
+    await getServiceClient().from("audit_log").insert({
       community_id: application.community_id,
       actor: "moderator",
       action: "channel_send",

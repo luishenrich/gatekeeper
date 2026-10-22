@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase/server";
+import { getServiceClient } from "@/lib/supabase/server";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ application_id: string }> }) {
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
       return NextResponse.json({ error: "Evidence required for blocklist report" }, { status: 400 });
     }
 
-    const { data: application }: { data: any | null } = await supabaseServer
+    const { data: application }: { data: any | null } = await getServiceClient()
       .from("applications")
       .select("*, community_id")
       .eq("id", application_id)
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
     }
 
-    await supabaseServer.from("decisions").insert({
+    await getServiceClient().from("decisions").insert({
       application_id,
       decision,
       score: decision === "accept" ? 100 : 0,
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
       const handle_hmac = application.handle ? hashHandle(application.handle) : null;
       const email_hmac = application.email ? hashEmail(application.email) : null;
 
-      const { data: entry }: { data: any | null } = await supabaseServer
+      const { data: entry }: { data: any | null } = await getServiceClient()
         .from("blocklist_entries")
         .insert({
           community_id: application.community_id,
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
       }
     }
 
-    await supabaseServer.from("audit_log").insert({
+    await getServiceClient().from("audit_log").insert({
       community_id: application.community_id,
       actor: "moderator",
       action: "moderator_decision",

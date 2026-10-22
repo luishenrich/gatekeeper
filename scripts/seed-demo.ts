@@ -1,18 +1,18 @@
-import { supabaseServer } from "@/lib/supabase/server";
+import { getServiceClient } from "@/lib/supabase/server";
 
 async function seed() {
   console.log("Resetting demo tables...");
 
-  await supabaseServer.from("audit_log").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  await getServiceClient().from("audit_log").delete().neq("id", "00000000-0000-0000-0000-000000000000");
   console.log("✓ Cleared audit_log");
 
-  await supabaseServer.from("decisions").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  await getServiceClient().from("decisions").delete().neq("id", "00000000-0000-0000-0000-000000000000");
   console.log("✓ Cleared decisions");
 
-  await supabaseServer.from("applications").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  await getServiceClient().from("applications").delete().neq("id", "00000000-0000-0000-0000-000000000000");
   console.log("✓ Cleared applications");
 
-  await supabaseServer.from("blocklist_entries").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  await getServiceClient().from("blocklist_entries").delete().neq("id", "00000000-0000-0000-0000-000000000000");
   console.log("✓ Cleared blocklist_entries");
 
   console.log("\nDemo reset complete. Run the demo:");

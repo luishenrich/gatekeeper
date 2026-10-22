@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase/server";
+import { getServiceClient } from "@/lib/supabase/server";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
 
 export async function POST(req: NextRequest) {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (handle_hmac) conditions.push(`handle_norm_hmac.eq.${handle_hmac}`);
     if (email_hmac) conditions.push(`email_hmac.eq.${email_hmac}`);
 
-    const { data: matches }: { data: any[] | null } = await supabaseServer
+    const { data: matches }: { data: any[] | null } = await getServiceClient()
       .from("blocklist_entries")
       .select("phone_hmac, handle_norm_hmac, email_hmac, status, created_at")
       .eq("status", "confirmed")

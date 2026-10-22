@@ -1,5 +1,5 @@
 import "server-only";
-import { supabaseServer } from "@/lib/supabase/server";
+import { getServiceClient } from "@/lib/supabase/server";
 import { scoreApplication } from "@/lib/scorer";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
 import { classifySpamText } from "@/lib/spam-classifier";
@@ -29,17 +29,28 @@ export async function scoreApplicationInternal(
     forwarded?: boolean;
   }
 ): Promise<ScoringResult> {
-  const { data: community }: { data: any | null } = await supabaseServer
+  const db = getServiceClient();
+
+  const { data: community, error: communityError } = await db
     .from("communities")
     .select("id, rules_md")
     .eq("slug", communitySlug)
-    .single();
+    .maybeSingle();
 
-  if (!community) {
-    throw new Error("Community not found");
+  if (communityError || !community) {
+    console.error("score: community lookup failed", {
+      communitySlug,
+      error: communityError,
+    });
+    const detail = communityError
+      ? [communityError.message, communityError.code, communityError.details, communityError.hint]
+          .filter(Boolean)
+          .join(" ")
+      : "no row returned";
+    throw new Error(`Community not found: ${detail}`);
   }
 
-  const { data: appRecord }: { data: any | null } = await supabaseServer
+  const { data: appRecord, error: appError } = await db
     .from("applications")
     .insert({
       community_id: community.id,
@@ -55,19 +66,30 @@ export async function scoreApplicationInternal(
     .select("id")
     .single();
 
-  if (!appRecord) {
-    throw new Error("Failed to create application");
+  if (appError || !appRecord) {
+    console.error("score: application insert failed", appError);
+    const detail = appError
+      ? [appError.message, appError.code, appError.details].filter(Boolean).join(" ")
+      : "no row returned";
+    throw new Error(`Failed to create application: ${detail}`);
   }
 
   const phone_hmac = application.phone ? hashPhone(application.phone) : null;
   const handle_hmac = application.handle ? hashHandle(application.handle) : null;
   const email_hmac = application.email ? hashEmail(application.email) : null;
 
-  const { data: blocklistMatches }: { data: any[] | null } = await supabaseServer
+  const { data: blocklistMatches, error: blocklistError } = await db
     .from("blocklist_entries")
     .select("phone_hmac, handle_norm_hmac, email_hmac, status, created_at")
     .eq("status", "confirmed")
     .or(`phone_hmac.eq.${phone_hmac},handle_norm_hmac.eq.${handle_hmac},email_hmac.eq.${email_hmac}`);
+
+  if (blocklistError) {
+    console.error("score: blocklist lookup failed", blocklistError);
+    throw new Error(
+      `Blocklist check failed: ${[blocklistError.message, blocklistError.code, blocklistError.details].filter(Boolean).join(" ")}`
+    );
+  }
 
   let blocklist_match: any = undefined;
   let decision = "";
@@ -140,7 +162,7 @@ export async function scoreApplicationInternal(
     signals.devpost = devpostResult;
   }
 
-  await supabaseServer.from("decisions").insert({
+  const { error: decisionError } = await db.from("decisions").insert({
     application_id: appRecord.id,
     decision,
     score,
@@ -150,12 +172,26 @@ export async function scoreApplicationInternal(
     final: false,
   } as any);
 
-  await supabaseServer.from("audit_log").insert({
+  if (decisionError) {
+    console.error("score: decision insert failed", decisionError);
+    throw new Error(
+      `Failed to save decision: ${[decisionError.message, decisionError.code, decisionError.details].filter(Boolean).join(" ")}`
+    );
+  }
+
+  const { error: auditError } = await db.from("audit_log").insert({
     community_id: community.id,
     actor: "system",
     action: "score_application",
     details: { application_id: appRecord.id, decision, score, channel: application.channel },
   } as any);
+
+  if (auditError) {
+    console.error("score: audit insert failed", auditError);
+    throw new Error(
+      `Failed to write audit log: ${[auditError.message, auditError.code, auditError.details].filter(Boolean).join(" ")}`
+    );
+  }
 
   return {
     application_id: appRecord.id,
