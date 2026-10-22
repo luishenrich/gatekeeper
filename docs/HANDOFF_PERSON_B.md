@@ -29,8 +29,18 @@ B reads `applications` joined with their latest `decisions` row through the Supa
 POST /api/score
   body: { community_slug, application: { name, handle, phone, email, github, text } }
   200:  { application_id, decision: "accept"|"ask"|"decline", score: 0-100,
-          reason: string, signals: { rules_fit, stopforumspam, github, spam_text, blocklist_hit: bool },
+          reason: string, 
+          signals: { 
+            rules_fit: { score: 0-100, rule_refs: string[] },
+            spam_text: { score: 0-1, matched_patterns: string[] },
+            stopforumspam: { appears: bool, frequency: number, confidence: number } | null,
+            github: { exists: bool, account_age_days: number, public_repos: number } | null,
+            devpost: { projects_found: number } | null,
+            blocklist_hit: bool
+          },
           blocklist_match?: { matched_on: ["phone"|"handle"|"email"], status: "confirmed", reported_at } }
+  
+  NOTE: null signals mean the check was skipped or timed out. The queue 'why' panel must render every signal.
 
 POST /api/decisions/:application_id      (moderator action from the queue)
   body: { decision: "accept"|"decline", report_to_blocklist: boolean, evidence?: string }
@@ -72,7 +82,7 @@ Until A's routes are live, **mock them** with `/api/_mock/*` returning the shape
 ### B2 · Cursor agent (code): review queue, start at once
 > In this Next.js App Router + TypeScript repo (Tailwind is fine), build a `/queue` page for moderators.
 > - Data: applications joined with their latest `decisions` row (see the contract in `HANDOFF_PERSON_B.md`). Show only rows where `decision = 'ask'` OR `signals.blocklist_hit = true` OR `final = false`, newest first. Until the real API exists, read from `/api/_mock/queue`, which returns fixture data built from `/workspace/gatekeeper_data` (copy 6 fictional applicants into `fixtures/queue.json`, and include A21 and A22 `@cryptomax_alpha1`).
-> - Each card shows the name, handle, community, a big score badge (0-100, colour-coded), the verdict pill, the `reason` text in full, and a collapsible list of `signals`. A blocklist hit gets a red banner: "Matched shared blocklist on phone, handle · confirmed · reported 22 Oct".
+> - Each card shows the name, handle, community, a big score badge (0-100, colour-coded), the verdict pill, the `reason` text in full, and a collapsible 'Why?' panel showing ALL signals: rules_fit (score + rule_refs), spam_text (score + matched_patterns), stopforumspam (appears/frequency/confidence or 'skipped'), github (exists/account_age/public_repos or 'skipped'), devpost (projects_found or 'skipped'), blocklist_hit. Null values mean the check was skipped or timed out—render them as 'not checked'. A blocklist hit gets a red banner: "Matched shared blocklist on phone, handle · confirmed · reported 22 Oct".
 > - Buttons: **Accept** and **Decline**. Decline opens an inline panel with a **"Report to shared blocklist"** toggle (off by default) and an evidence textarea that's required when the toggle is on. On submit, call `POST /api/decisions/:application_id` with `{ decision, report_to_blocklist, evidence }`, show the returned `blocklist_status`, and remove the card optimistically.
 > - Add a community switcher in the header (`london-agent-builders` / `south-london-hack-nights`), so the demo can show the second community seeing the hit.
 > - No raw phone or email in the UI. Show them masked (`+44 •••• 21`).
