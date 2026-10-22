@@ -10,14 +10,16 @@ Community leads review applications by hand, and a scammer kicked from one group
 
 ## Who owns what
 - **Person A (Luis):** Supabase schema + RLS, HMAC/normalisation, scorer, all `/api/*` routes, the eval page.
-- **Person B (you):** the review queue UI (Next.js) with the report-to-blocklist toggle, and the discord.js join-check bot.
+- **Person B (you):** the review queue UI (Next.js) with the report-to-blocklist toggle, the discord.js join-check bot, and the WhatsApp 1:1 channel (official Cloud API) behind the shared `ChannelAdapter`.
+- **Scope note:** WhatsApp is **1:1 applications only**. The official Cloud API can't moderate groups, so don't promise group kicks or scans on WhatsApp.
+- **Human in the loop:** no reply goes to an applicant on any channel until the lead clicks in the queue. Decline replies especially are drafted, shown in the queue, and only sent on click.
 - **Rule:** B never computes HMACs and never writes to `blocklist_entries` directly. Everything goes through A's API routes, because the HMAC secret stays on the server.
 
 ## Contracts with Person A (do not change without telling A)
 
 ### Tables (Supabase, from SPEC.md)
 - `communities(id uuid, slug text, name text)`, seeded with `london-agent-builders` and `south-london-hack-nights`
-- `applications(id uuid, community_id uuid, name, handle, phone, email, github, text, created_at)`
+- `applications(id uuid, community_id uuid, channel 'whatsapp'|'discord'|'web', channel_user_id text, name, handle, phone, email, github, text, created_at)`. Ask A to add `channel` + `channel_user_id` if they're missing.
 - `decisions(id uuid, application_id uuid, decision 'accept'|'ask'|'decline', score int 0-100, reason text, signals jsonb, decided_by text null, final bool default false, created_at)`
 - `blocklist_entries(id, community_id, phone_hmac, handle_norm_hmac, email_hmac, evidence, reporter, status 'pending'|'confirmed'|'appealed'|'cleared', created_at)`
 - `appeals`, `audit_log`, owned by A (B only reads them if needed)
@@ -29,24 +31,26 @@ B reads `applications` joined with their latest `decisions` row through the Supa
 POST /api/score
   body: { community_slug, application: { name, handle, phone, email, github, text } }
   200:  { application_id, decision: "accept"|"ask"|"decline", score: 0-100,
-          reason: string, 
-          signals: { 
-            rules_fit: { score: 0-100, rule_refs: string[] },
-            spam_text: { score: 0-1, matched_patterns: string[] },
-            stopforumspam: { appears: bool, frequency: number, confidence: number } | null,
-            github: { exists: bool, account_age_days: number, public_repos: number } | null,
-            devpost: { projects_found: number } | null,
-            blocklist_hit: bool
-          },
+          reason: string, signals: { rules_fit, stopforumspam, github, spam_text, blocklist_hit: bool },
           blocklist_match?: { matched_on: ["phone"|"handle"|"email"], status: "confirmed", reported_at } }
-  
-  NOTE: null signals mean the check was skipped or timed out. The queue 'why' panel must render every signal.
 
 POST /api/decisions/:application_id      (moderator action from the queue)
   body: { decision: "accept"|"decline", report_to_blocklist: boolean, evidence?: string }
   200:  { ok: true, blocklist_entry_id?: string, blocklist_status?: "pending"|"confirmed" }
 
-POST /api/blocklist/check                (used by the Discord bot)
+POST /api/decisions/:application_id also returns
+  { reply_draft?: { channel, text } }   (the queue shows it, nothing is sent yet)
+
+POST /api/channel/send                   (owned by B, called only by the queue on a lead's click)
+  body: { application_id, text }
+  -> looks up channel + channel_user_id, calls ChannelAdapter.send(), writes audit_log
+  200: { ok: true, channel, sent_at }
+
+POST /api/whatsapp/webhook  + GET verify (owned by B)
+  inbound 1:1 text -> ChannelAdapter.toApplication() -> POST /api/score -> stored with channel='whatsapp'
+  auto-acknowledgement allowed ONLY as a fixed neutral text ("Thanks, a moderator will review your application"), no verdict
+
+POST /api/blocklist/check                (used by the Discord bot and the WhatsApp intake)
   headers: Authorization: Bearer ${BOT_API_TOKEN}
   body: { community_slug, handle?, email?, phone? }
   200:  { match: boolean, matched_on?: ["handle"|...], status?: "confirmed", reported_at?: string }
@@ -55,7 +59,7 @@ POST /api/blocklist/check                (used by the Discord bot)
 Until A's routes are live, **mock them** with `/api/_mock/*` returning the shapes above. Use the fictional data in `/workspace/gatekeeper_data`.
 
 ### Env vars B needs
-`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `GATEKEEPER_API_URL`, `BOT_API_TOKEN`, `DISCORD_BOT_TOKEN`, `DISCORD_MOD_CHANNEL_ID`, `COMMUNITY_SLUG`. Never commit any of them, and ship a `.env.example` instead.
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `GATEKEEPER_API_URL`, `BOT_API_TOKEN`, `DISCORD_BOT_TOKEN`, `DISCORD_MOD_CHANNEL_ID`, `COMMUNITY_SLUG`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`, `OPENROUTER_API_KEY` (A's). Never commit any of them, and ship a `.env.example` instead.
 
 ## Milestones (London time, from SPEC.md)
 - **19:15**: repo public with LICENSE, README and scaffold. B has the `/queue` page rendering mock data.
@@ -66,10 +70,11 @@ Until A's routes are live, **mock them** with `/api/_mock/*` returning the shape
 - **21:50**: code freeze, everything pushed.
 
 ## Cut order if behind (cut the first item first)
-1. Discord bot: show the cross-community hit inside the web app instead, by logging in as the second community.
-2. External lookups in the scorer (A's call): keep the LLM reasons plus the blocklist only.
-3. The `ask` verdict in the UI: just accept or decline.
-4. Eval page numbers: show a few hand-picked cases instead.
+1. Discord bot: WhatsApp carries the channel story, and the cross-community hit can also be shown in the web app.
+2. Live WhatsApp Cloud API: **go/no-go at 20:30**. If a real phone message doesn't round-trip by then, demo with `simulate_whatsapp` (it posts the same webhook payload).
+3. External lookups in the scorer (A's call): keep the LLM reasons plus the blocklist only.
+4. The `ask` verdict in the UI: just accept or decline.
+5. Eval page polish: show the headline numbers only.
 **Never cut:** the shared HMAC blocklist and the cross-community block in the demo.
 
 ---
@@ -82,8 +87,8 @@ Until A's routes are live, **mock them** with `/api/_mock/*` returning the shape
 ### B2 · Cursor agent (code): review queue, start at once
 > In this Next.js App Router + TypeScript repo (Tailwind is fine), build a `/queue` page for moderators.
 > - Data: applications joined with their latest `decisions` row (see the contract in `HANDOFF_PERSON_B.md`). Show only rows where `decision = 'ask'` OR `signals.blocklist_hit = true` OR `final = false`, newest first. Until the real API exists, read from `/api/_mock/queue`, which returns fixture data built from `/workspace/gatekeeper_data` (copy 6 fictional applicants into `fixtures/queue.json`, and include A21 and A22 `@cryptomax_alpha1`).
-> - Each card shows the name, handle, community, a big score badge (0-100, colour-coded), the verdict pill, the `reason` text in full, and a collapsible 'Why?' panel showing ALL signals: rules_fit (score + rule_refs), spam_text (score + matched_patterns), stopforumspam (appears/frequency/confidence or 'skipped'), github (exists/account_age/public_repos or 'skipped'), devpost (projects_found or 'skipped'), blocklist_hit. Null values mean the check was skipped or timed out—render them as 'not checked'. A blocklist hit gets a red banner: "Matched shared blocklist on phone, handle · confirmed · reported 22 Oct".
-> - Buttons: **Accept** and **Decline**. Decline opens an inline panel with a **"Report to shared blocklist"** toggle (off by default) and an evidence textarea that's required when the toggle is on. On submit, call `POST /api/decisions/:application_id` with `{ decision, report_to_blocklist, evidence }`, show the returned `blocklist_status`, and remove the card optimistically.
+> - Each card shows a **channel badge** (`whatsapp` green / `discord` blurple / `web` grey), the name, handle, community, a big score badge (0-100, colour-coded), the verdict pill, the `reason` text in full, and a collapsible list of `signals`. A blocklist hit gets a red banner: "Matched shared blocklist on phone, handle · confirmed · reported 22 Oct".
+> - Buttons: **Accept** and **Decline**. Decline opens an inline panel with a **"Report to shared blocklist"** toggle (off by default) and an evidence textarea that's required when the toggle is on. On submit, call `POST /api/decisions/:application_id` with `{ decision, report_to_blocklist, evidence }` and show the returned `blocklist_status`. If a `reply_draft` comes back, show it in an editable box with a **Send reply via <channel>** button that calls `POST /api/channel/send`. Nothing is sent to the applicant without that click. Then remove the card.
 > - Add a community switcher in the header (`london-agent-builders` / `south-london-hack-nights`), so the demo can show the second community seeing the hit.
 > - No raw phone or email in the UI. Show them masked (`+44 •••• 21`).
 > - Add a `/api/_mock/*` set implementing exactly the shapes in the contract, behind `USE_MOCKS=true`.
@@ -100,12 +105,20 @@ Until A's routes are live, **mock them** with `/api/_mock/*` returning the shape
 > - Add `bot/.env.example`, a `bot/README.md` covering Developer Portal setup (enable the Server Members privileged intent, invite URL with `bot applications.commands` scopes and Kick Members permission) and `npm run dev`.
 > - Never put tokens in code, and never kick without a human click.
 
+### B4b · Cursor agent (code): WhatsApp 1:1 intake via the official Cloud API, cut #2 (simulator fallback)
+> Implement the WhatsApp side of the shared `ChannelAdapter` interface (`lib/channels/adapter.ts`: `toApplication(inbound) -> Application`, `send(channel_user_id, text) -> {sent_at}`) using the **official WhatsApp Cloud API only** (Graph API `/{WHATSAPP_PHONE_NUMBER_ID}/messages`). No Baileys or whatsapp-web.js.
+> - `GET /api/whatsapp/webhook`: verify the `hub.verify_token` challenge. `POST /api/whatsapp/webhook`: verify `X-Hub-Signature-256` with `WHATSAPP_APP_SECRET`, take 1:1 text messages only (ignore groups, statuses and media), map them to an application (`channel='whatsapp'`, `channel_user_id` = sender wa_id, `phone` = sender number), call `POST /api/score`, and store the result.
+> - The only automatic outbound is a fixed neutral acknowledgement inside the 24h customer-service window ("Thanks, a moderator will review your application"). It never states a verdict. Verdict replies go only through `POST /api/channel/send` when the lead clicks in the queue.
+> - Keep `scripts/simulate_whatsapp.ts` posting a realistic signed webhook payload (e.g. A22 from the same phone as A21), so the demo works without a live phone. It's the official fallback.
+> - Add the WhatsApp vars to `.env.example` and a README section on Meta app setup (test number, webhook URL, verify token).
+
 ### B5 · Grok Bot (planning): demo rehearsal, ~21:15
 > Here's our Gatekeeper demo flow: [paste SPEC.md "Demo script"]. Write a tight 3-minute script for 2 speakers with exact clicks, what to say over each step, and a fallback line for each step if it fails live (mocks, slash command, video). Also list what must be open in browser tabs before we go on stage.
 
 ## Done means
 - `/queue` deployed, both communities switchable, a decline with report works end-to-end against A's API.
 - The bot flags a blocklisted join in a test server (or is cut by 20:30 and the slash command or in-app view covers it).
+- A WhatsApp 1:1 application (live or via `simulate_whatsapp`) shows up in the queue with a `whatsapp` badge, and a decline reply only goes out on the lead's click.
 - No secrets and no real member data in the repo. `.env.example` files are present.
 
 ---

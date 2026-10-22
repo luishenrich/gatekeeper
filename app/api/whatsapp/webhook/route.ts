@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       handle: message.handle,
       text: message.text,
       channel: "whatsapp",
-      channel_ref: message.channel_ref,
+      channel_user_id: message.sender_id,
       forwarded: message.forwarded,
     });
 

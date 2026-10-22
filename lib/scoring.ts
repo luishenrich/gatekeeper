@@ -25,7 +25,7 @@ export async function scoreApplicationInternal(
     github?: string;
     text: string;
     channel?: string;
-    channel_ref?: string;
+    channel_user_id?: string;
     forwarded?: boolean;
   }
 ): Promise<ScoringResult> {
@@ -50,7 +50,7 @@ export async function scoreApplicationInternal(
       github: application.github,
       text: application.text,
       channel: application.channel || "web",
-      channel_ref: application.channel_ref,
+      channel_user_id: application.channel_user_id,
     } as any)
     .select("id")
     .single();

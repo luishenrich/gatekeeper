@@ -17,7 +17,8 @@ export async function POST(req: Request) {
       email: application.email,
       github: application.github,
       text: application.text,
-      channel: "web",
+      channel: application.channel || "web",
+      channel_user_id: application.channel_user_id,
     });
 
     return NextResponse.json(result);

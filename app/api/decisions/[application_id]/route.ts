@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { hashHandle, hashPhone, hashEmail } from "@/lib/hmac";
-import { WhatsAppAdapter } from "@/lib/channels/whatsapp";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ application_id: string }> }) {
   try {
@@ -39,6 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
 
     let blocklist_entry_id: string | undefined;
     let blocklist_status: string | undefined;
+    let reply_draft: { channel: string; text: string } | undefined;
 
     if (report_to_blocklist && decision === "decline") {
       const phone_hmac = application.phone ? hashPhone(application.phone) : null;
@@ -65,12 +65,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
       }
     }
 
-    if (decision === "decline" && application.channel === "whatsapp" && application.phone) {
-      try {
-        const whatsapp = new WhatsAppAdapter();
-        await whatsapp.sendReply(application.phone, "Sorry, we can't accept this application.");
-      } catch (e) {
-        console.error("Failed to send WhatsApp reply:", e);
+    if (application.channel && application.channel !== "web") {
+      if (decision === "accept") {
+        reply_draft = {
+          channel: application.channel,
+          text: "Thanks! Your application has been accepted. A community lead will reach out shortly with next steps.",
+        };
+      } else if (decision === "decline") {
+        reply_draft = {
+          channel: application.channel,
+          text: "Thanks for applying. We aren't able to accept this application right now.",
+        };
       }
     }
 
@@ -85,6 +90,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ app
       ok: true,
       blocklist_entry_id,
       blocklist_status,
+      reply_draft,
     });
   } catch (error: any) {
     console.error("Decision error:", error);
