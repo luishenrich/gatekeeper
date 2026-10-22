@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node lib/hmac.test.js"
+    "test": "node lib/hmac.test.js",
+    "eval": "npx tsx scripts/eval.ts",
+    "seed-demo": "npx tsx scripts/seed-demo.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
