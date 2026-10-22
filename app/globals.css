@@ -2,24 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Wispr Flow–inspired theme: warm cream paper, ink text, lilac accent, serif display. */
 @layer base {
+  :root {
+    --background: 60 45% 96%;          /* #F9F8F0 warm paper */
+    --foreground: 0 0% 10%;            /* #1A1A1A ink */
+    --card: 60 100% 99%;               /* #FFFFFB */
+    --card-foreground: 0 0% 10%;
+    --popover: 60 100% 99%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 0% 10%;               /* ink buttons */
+    --primary-foreground: 60 100% 96%;
+    --secondary: 277 100% 92%;         /* #F0D7FF lilac */
+    --secondary-foreground: 0 0% 10%;
+    --muted: 60 22% 91%;               /* #EDEDE3 */
+    --muted-foreground: 50 6% 34%;     /* #5C5A52 — AA on paper */
+    --accent: 60 26% 89%;              /* #E9E9DA */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 350 75% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 60 20% 84%;              /* #DCDCCB */
+    --input: 60 20% 80%;
+    --ring: 277 60% 60%;
+    --radius: 0.875rem;
+    --chart-1: 277 70% 70%;
+    --chart-2: 152 50% 40%;
+    --chart-3: 38 90% 55%;
+    --chart-4: 350 70% 55%;
+    --chart-5: 0 0% 30%;
+    --sidebar-background: 60 35% 93%; /* #F2F1E6 */
+    --sidebar-foreground: 0 0% 18%;
+    --sidebar-primary: 0 0% 10%;
+    --sidebar-primary-foreground: 60 100% 96%;
+    --sidebar-accent: 60 20% 86%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 60 18% 84%;
+    --sidebar-ring: 277 60% 60%;
+  }
+
+  * {
+    @apply border-border;
+  }
   html {
     -webkit-text-size-adjust: 100%;
   }
   body {
-    @apply bg-white text-[17px] text-slate-900 antialiased;
-    font-feature-settings: "cv11", "ss01";
+    @apply bg-background font-sans text-[16px] text-foreground antialiased;
   }
   ::selection {
-    @apply bg-slate-900 text-white;
+    background: hsl(277 100% 88%);
+    color: hsl(0 0% 10%);
+  }
+  .font-display {
+    font-family: var(--font-serif), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
   .gk-shimmer {
-    background-image: linear-gradient(90deg, rgb(226 232 240) 0%, rgb(241 245 249) 50%, rgb(226 232 240) 100%);
+    background-image: linear-gradient(90deg, hsl(60 22% 89%) 0%, hsl(60 30% 94%) 50%, hsl(60 22% 89%) 100%);
     background-size: 200% 100%;
     animation: gk-shimmer 1.4s ease-in-out infinite;
+  }
+  .gk-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
   }
   @media (prefers-reduced-motion: reduce) {
     .gk-shimmer {
