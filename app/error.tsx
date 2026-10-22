@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { Button, ErrorState } from "@/components/ui";
+import { ErrorState } from "@/components/ui";
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -18,8 +18,8 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         onRetry={reset}
       />
       <div className="mt-6 flex gap-3">
-        <Link href="/">
-          <Button variant="ghost">Go home</Button>
+        <Link href="/" className="rounded-xl px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-100">
+          Go home
         </Link>
       </div>
     </main>
