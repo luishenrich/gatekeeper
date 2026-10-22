@@ -2,6 +2,37 @@
 
 Stop scammers getting into communities while letting real builders in fast. Greenlight scores applications against community rules using AI, maintains a shared blocklist across communities (HMAC-hashed for privacy), and provides a review queue for moderators. Built for hackathon Track 1 (community infrastructure).
 
+## How a team of Grok Bots helped us build this
+
+Greenlight was built in a single evening at the Grok Bot Community Engineering London Hackathon (22 Oct 2026) by two humans working alongside a team of Grok Bot agents. Each agent had its own chat, memory and job, and they handed work to each other the way a small team would.
+
+### The team
+
+- **Hackathon (lead bot):** held the shared context for the whole night. It routed decisions between the agents, tested production live (sending signed WhatsApp webhooks, scoring real requests, checking that lead pages stay locked), rotated the lead passcode after it was pasted in chat, set Vercel env vars and redeployed, resolved the merge conflicts on the redesign PR, seeded fictional demo applicants, and wrote the design brief we gave Claude Code for the UI pass.
+- **Hack Strategy:** turned the hackathon brief into one idea, scoped the MVP, and set a cut order for when time ran short. When the clock got tight we used it: the Discord bot was dropped, and the HMAC blocklist was never cut.
+- **Hack Research:** mapped the competitors (Telegram CAS/Combot, Matrix Mjolnir/Draupnir, Discord FedBot). Each is tied to one platform and only asks "is this a known spammer?". It found no verified shared blocklist for WhatsApp groups. It also sourced public spam data for the test set: UCI SMS Spam Collection (CC BY 4.0) and telegram-spam-ham (WTFPL).
+- **Hack Builder:** wrote the backend with Cursor agents: Next.js on Vercel, Supabase with Row Level Security, an HMAC-SHA256 hashed shared blocklist (no raw phone numbers stored), a signed WhatsApp Cloud API webhook that rejects unsigned requests, magic-link and passcode login for community leads, auto mode, and the live /demo backend. It reviewed its own work and fixed the security gaps it found, such as unauthenticated send routes and phone numbers in logs.
+- **Hack Pitch:** wrote the submission text, the video script and the live talk track, and corrected our own claims when the numbers didn't support them.
+
+### How we chose the model
+
+Instead of picking a model on vibes, the agents built a labelled test set of 200 applicants (80 good fit, 50 borderline, 50 scammers, 10 bots, 10 cross-community repeats) and ran every candidate scorer on it.
+
+| Model | Correct | False blocks | Scammers accepted |
+|---|---|---|---|
+| Jev (typesafe/jev-router) | 195/200 (97.5%) | 0 | 0 |
+| GPT-6 Luna | 179/200 (89.5%) | 0 | 0 |
+
+Honest misses: Jev sent 4 bots to "ask" rather than declining them, and accepted 1 borderline applicant it should have asked about. Full results are in data/eval_large_results.json.
+
+### Where humans stayed in charge
+
+- Every product decision was ours; the agents proposed, we chose.
+- No secrets went in chat or into the repo. Keys live in Vercel env vars and local files.
+- No real member data is in the repo. All demo applicants are fictional.
+- Declines and blocklist hits never send on their own. A community lead always clicks send.
+- Claude Code (with subagents) did the UI redesign from a brief the Grok Bots wrote.
+
 ## Architecture
 
 - **Next.js App Router** (TypeScript + Tailwind) – Review queue UI and API routes
