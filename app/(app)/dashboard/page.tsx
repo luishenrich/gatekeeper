@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { matchesLeadToken } from "@/lib/auth/queue-admin";
 import DashboardClient, { DashboardSkeleton } from "./DashboardClient";
+import { BENCHMARK } from "@/lib/ui/benchmark";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Dashboard" };
@@ -17,7 +18,7 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
       <Suspense fallback={<DashboardSkeleton />}>
-        <DashboardClient useMocks={useMocks} />
+        <DashboardClient useMocks={useMocks} benchmark={BENCHMARK} />
       </Suspense>
     </div>
   );

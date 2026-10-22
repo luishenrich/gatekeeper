@@ -30,8 +30,8 @@ const ROWS: { label: string; hint?: string; cells: [Cell, Cell, Cell, Cell] }[] 
     cells: ["yes", "no", "partial", "partial"],
   },
   {
-    label: "Web, WhatsApp and Discord in one queue",
-    hint: "WhatsApp intake, Discord join check",
+    label: "Web and WhatsApp in one queue",
+    hint: "WhatsApp intake and web form",
     cells: ["yes", "no", "no", "no"],
   },
   {

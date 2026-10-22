@@ -26,7 +26,7 @@ const STEPS = [
   {
     Icon: Inbox,
     title: "Apply anywhere",
-    body: "Applicants use your web form or message your WhatsApp number. A Discord bot checks new joins against the same blocklist.",
+    body: "Applicants use your web form or message your WhatsApp number. Both land in one queue.",
   },
   {
     Icon: ScanSearch,
@@ -258,9 +258,9 @@ export default function Home() {
                   Apply from <em className="font-display italic">WhatsApp</em>.
                 </>
               }
-              body="People already live in their chats. Applicants message your number, answer a few questions and land in the same queue as web applications. Discord joins are checked against the blocklist too."
+              body="People already live in their chats. Applicants message your number, answer a few questions and land in the same queue as web applications."
               points={[
-                "Web form, WhatsApp and Discord in one queue",
+                "Web form and WhatsApp in one queue",
                 "Questions come from your community's own rules",
                 "Replies are drafted for you, never sent without a lead",
               ]}

@@ -32,10 +32,10 @@ function Card({ children, className }: { children: React.ReactNode; className?: 
   );
 }
 
-/* (1) Intake: WhatsApp chat + web form + Discord, all into one queue */
+/* (1) Intake: WhatsApp chat + web form, both into one queue */
 export function IntakeIllustration() {
   return (
-    <Frame label="Demo data: a WhatsApp conversation, a web form and a Discord join all flow into one review queue.">
+    <Frame label="Demo data: a WhatsApp conversation and a web form both flow into one review queue.">
       <div className="mt-6 grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-3 sm:gap-4">
         {/* Phone */}
         <Card className="row-span-2 p-3 sm:p-4">
@@ -75,11 +75,6 @@ export function IntakeIllustration() {
           </div>
         </Card>
 
-        {/* Discord */}
-        <Card className="flex items-center gap-2 self-start px-3 py-2.5 text-[13px] text-foreground sm:px-4">
-          <span className="h-2 w-2 rounded-full bg-foreground" />
-          Discord join check
-        </Card>
       </div>
 
       <div className="mt-4 flex flex-col items-center gap-2">

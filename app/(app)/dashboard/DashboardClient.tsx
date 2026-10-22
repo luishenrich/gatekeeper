@@ -31,7 +31,7 @@ import {
   asDecision,
   focusRing,
 } from "@/components/ui";
-import { BENCHMARK } from "@/lib/ui/benchmark";
+import type { Benchmark } from "@/lib/ui/benchmark";
 import { communityName } from "@/lib/ui/communities";
 import { initials, timeAgo } from "@/lib/ui/format";
 import { useApi } from "@/lib/ui/useApi";
@@ -66,7 +66,7 @@ function formatClock(d: Date): string {
   return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
 }
 
-export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
+export default function DashboardClient({ useMocks, benchmark }: { useMocks: boolean; benchmark: Benchmark }) {
   const [community] = useCommunity();
   const prefix = useMocks ? "/api/mock" : "/api";
   const { data, error, status, refetch } = useApi<StatsResponse>(
@@ -142,7 +142,7 @@ export default function DashboardClient({ useMocks }: { useMocks: boolean }) {
           <RecentDecisions stats={data} community={community} />
         </section>
         <aside>
-          <BenchmarkCard />
+          <BenchmarkCard benchmark={benchmark} />
         </aside>
       </div>
     </div>
@@ -258,7 +258,7 @@ function RecentDecisions({ stats, community }: { stats: StatsResponse; community
           className={recent.length > 0 ? "border-b border-border py-10" : undefined}
           icon={<Inbox className="h-7 w-7" aria-hidden />}
           title="No applications yet today — share your apply link"
-          body="New applications from WhatsApp, Discord and the web form show up here and in the review queue."
+          body="New applications from WhatsApp and the web form show up here and in the review queue."
           action={
             <Link
               href={`/apply?community=${encodeURIComponent(community)}`}
@@ -329,7 +329,7 @@ function RecentRow({ row, community }: { row: StatsRecent; community: string }) 
   );
 }
 
-function BenchmarkCard() {
+function BenchmarkCard({ benchmark: BENCHMARK }: { benchmark: Benchmark }) {
   return (
     <Link
       href="/eval"
