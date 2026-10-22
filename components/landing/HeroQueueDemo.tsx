@@ -61,14 +61,14 @@ const SIGNALS: UiSignal[] = [
 const EARLIER: {
   name: string;
   handle: string;
-  channel: "discord" | "whatsapp";
+  channel: "web" | "whatsapp";
   decision: Decision;
   score: number;
 }[] = [
   {
     name: "Jonah Stubbs",
     handle: "@jonah_s",
-    channel: "discord",
+    channel: "web",
     decision: "accept",
     score: 88,
   },
