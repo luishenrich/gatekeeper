@@ -1,0 +1,31 @@
+id,expected_decision,reason
+A01,accept,"Builds agents, open-source repo, offers to demo, London-based (rules 1, 2, 3)."
+A02,accept,"Hands-on builder, clear give-and-take, London."
+A03,accept,"Student builder with shipped hackathon project, London."
+A04,accept,Builder-founder offering to host/mentor; not selling (rule 4 ok).
+A05,accept,DevRel contributing content; no github but strong LinkedIn + offer to teach.
+A06,accept,"Shipped bot, wants to contribute to OSS, London."
+A07,accept,"Builder with real use case, London."
+A08,accept,"OSS maintainer, clear contribution."
+A09,accept,"Hands-on builder, London, offers to share."
+A10,accept,Community organiser aligned with community 2 purpose.
+A11,accept,"Organiser with venue knowledge, community 2 fit."
+A12,accept,"Existing community lead, fits community 2."
+A13,ask,Genuine-sounding but no building activity; ask what she is working on (rule 2).
+A14,ask,Sales role; may be fine but rule 4 forbids pitching — ask intent and remind of no-pitch rule.
+A15,ask,Strong builder but not London-based (rule 3); ask about attendance.
+A16,ask,Recruiter; allowed only in #jobs per rule 4; ask to confirm.
+A17,ask,Beginner; rules welcome learners who build — ask for repo link.
+A18,ask,Investor; allowed as listener but not deal-sourcing via DMs (rule 4) — ask.
+A19,ask,No information at all; ask the community-2 screening question.
+A20,ask,Possibly useful organiser but promotes paid course; ask to follow promo rules.
+A21,decline,"Crypto pump, guaranteed returns, urgency, DM lure (rule 5)."
+A22,decline,Same phone as A21 (blocklisted in community 1); handle variation; crypto pump.
+A23,decline,"Fake recruiter: asks for ID/bank details, unrealistic pay (rule 5)."
+A24,decline,Same phone as A23; handle variation; identical fake-recruiter script.
+A25,decline,"Link spam with shortened URLs, no intro (rule 5)."
+A26,decline,Exact handle+phone match with A25 — known spammer in community 1.
+A27,decline,"Repeated copy-paste text, numeric handle, no substance — likely bot."
+A28,decline,"LLM-generic text, no specifics, no links; matches bot pattern. (Could be 'ask' if a human — flag for review.)"
+A29,decline,"Investment scam, unrealistic returns, off-platform lure."
+A30,decline,Impersonates admin + phishing link (rule 5).
