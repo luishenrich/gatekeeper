@@ -1,95 +1,39 @@
-import smallRaw from "@/data/eval_results.json";
-import largeRaw from "@/data/eval_large_results.json";
+import "server-only";
+import large from "@/data/eval_large_results.json";
 
-type SmallModelKey = "openai/gpt-6-luna" | "typesafe/jev-router";
+// The only benchmark numbers the UI may show, computed from the 200-applicant
+// eval (data/eval_large_results.json). Server-only: pass the result to client
+// components as a prop so the 0.5 MB results file never ships to the browser.
 
-type LargeSummary = {
+type Summary = {
   n: number;
   correct: number;
   accuracy_over_scored: number;
   false_blocks: { count: number };
   missed_scammers_not_declined: { accepted: number; asked: number };
-  cost_usd_total: number | null;
+  cost_usd_total: number;
 };
+type Run = { summary: Summary; results: { id: string; category: string; expected: string; verdict: string }[] };
 
-type LargeResult = {
-  id: string;
-  category: string;
-  expected: string;
-  verdict: string | null;
-};
+export const LARGE_RUNS = (large as unknown as { runs: Record<string, Run> }).runs;
 
-type LargeRun = { summary: LargeSummary; results: LargeResult[] };
+const MODELS = [
+  { id: "typesafe/jev-router", name: "Jev" },
+  { id: "openai/gpt-6-luna", name: "GPT-6 Luna" },
+] as const;
 
-const largeRuns = (largeRaw as { runs: Record<string, LargeRun> }).runs;
-const lunaLarge = largeRuns["openai/gpt-6-luna"];
-const jevLarge = largeRuns["typesafe/jev-router"];
+const lead = LARGE_RUNS[MODELS[0].id].summary;
 
-function correctOf(modelKey: SmallModelKey): number {
-  let correct = 0;
-  for (const applicant of smallRaw.applicants) {
-    if (applicant[modelKey].verdict === applicant.expected) correct += 1;
-  }
-  return correct;
-}
-
-function botsSentToAsk(run: LargeRun): number {
-  return run.results.filter(
-    (row) => row.category === "bot" && row.expected === "decline" && row.verdict === "ask"
-  ).length;
-}
-
-function percent(accuracy: number): string {
-  return `${(accuracy * 100).toFixed(1)}%`;
-}
-
-const n = smallRaw.applicants.length;
-const lunaCorrect = correctOf("openai/gpt-6-luna");
-const jevCorrect = correctOf("typesafe/jev-router");
-const lunaSmall = smallRaw.models["openai/gpt-6-luna"];
-
-const secondary = {
-  n,
-  luna: `${lunaCorrect}/${n}`,
-  "jev-router": `${jevCorrect}/${n}`,
-  falseBlocks: lunaSmall.false_blocks,
-  missedScammers: lunaSmall.missed_scammers,
-} as const;
-
-const primary = {
-  n: jevLarge.summary.n,
-  "jev-router": {
-    ratio: `${jevLarge.summary.correct}/${jevLarge.summary.n}`,
-    accuracy: jevLarge.summary.accuracy_over_scored,
-    percent: percent(jevLarge.summary.accuracy_over_scored),
-    falseBlocks: jevLarge.summary.false_blocks.count,
-    scammersAccepted: jevLarge.summary.missed_scammers_not_declined.accepted,
-    botsSentToAsk: botsSentToAsk(jevLarge),
-    costUsd: jevLarge.summary.cost_usd_total,
-  },
-  luna: {
-    ratio: `${lunaLarge.summary.correct}/${lunaLarge.summary.n}`,
-    accuracy: lunaLarge.summary.accuracy_over_scored,
-    percent: percent(lunaLarge.summary.accuracy_over_scored),
-    falseBlocks: lunaLarge.summary.false_blocks.count,
-    scammersAccepted: lunaLarge.summary.missed_scammers_not_declined.accepted,
-    sentToAsk: lunaLarge.summary.missed_scammers_not_declined.asked,
-  },
-} as const;
-
-/**
- * Landing benchmark figures.
- * Top-level fields stay the n=30 set so existing imports keep working.
- * `primary` is the 200-applicant set in data/eval_large_results.json.
- * `secondary` repeats the n=30 set from data/eval_results.json.
- * jev-router's false blocks and missed scammers on the small set are both 0, same as luna.
- */
 export const BENCHMARK = {
-  luna: secondary.luna,
-  "jev-router": secondary["jev-router"],
-  falseBlocks: secondary.falseBlocks,
-  missedScammers: secondary.missedScammers,
-  n: secondary.n,
-  primary,
-  secondary,
-} as const;
+  testSetSize: lead.n,
+  testSetLabel: `${lead.n} labelled applicants`,
+  models: MODELS.map((m) => ({ id: m.id, name: m.name, correct: LARGE_RUNS[m.id].summary.correct })),
+  falseBlocks: lead.false_blocks.count,
+  missedScammers: lead.missed_scammers_not_declined.accepted,
+};
+
+export type Benchmark = typeof BENCHMARK;
+export type BenchmarkModel = Benchmark["models"][number];
+
+export const DATASET_NOTE =
+  "200 labelled applicants (80 good fit, 50 borderline, 50 scammers, 10 bots, 10 cross-community repeats). Scammer messages from UCI SMS Spam (CC BY 4.0) and telegram-spam-ham (WTFPL); the rest synthetic.";

@@ -25,3 +25,5 @@ export type DemoResponse = {
   error?: string;
   steps?: DemoStep[];
 };
+
+export type DemoStatus = "idle" | "loading" | "done" | "error";

@@ -1,3 +1,82 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Clean theme: white, black ink, serif display. Green/orange/red only carry meaning. */
+@layer base {
+  :root {
+    --background: 0 0% 100%;           /* white */
+    --foreground: 0 0% 7%;             /* #111 ink */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 0 0% 7%;                /* black buttons */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;             /* neutral grey surface */
+    --secondary-foreground: 0 0% 7%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 38%;      /* #616161 — AA on white */
+    --accent: 0 0% 95%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 86%;
+    --ring: 0 0% 7%;
+    --radius: 0.875rem;
+    --chart-1: 142 64% 38%;
+    --chart-2: 0 72% 50%;
+    --chart-3: 28 92% 52%;
+    --chart-4: 0 0% 40%;
+    --chart-5: 0 0% 20%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 0 0% 7%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 93%;
+    --sidebar-accent-foreground: 0 0% 7%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 7%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background font-sans text-[16px] text-foreground antialiased;
+  }
+  ::selection {
+    background: hsl(0 0% 7%);
+    color: hsl(0 0% 100%);
+  }
+  .font-display {
+    font-family: var(--font-serif), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .gk-shimmer {
+    background-image: linear-gradient(90deg, hsl(0 0% 92%) 0%, hsl(0 0% 96%) 50%, hsl(0 0% 92%) 100%);
+    background-size: 200% 100%;
+    animation: gk-shimmer 1.4s ease-in-out infinite;
+  }
+  .gk-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gk-shimmer {
+      animation: none;
+    }
+  }
+}
+
+@keyframes gk-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
