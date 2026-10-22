@@ -1,3 +1,5 @@
+Discord is out of scope for the demo.
+
 # Greenlight — Landing (`/`) + Sign-in (`/login`) upgrade brief
 
 ## 0. What's live now (fetched 22 Oct 2026, 20:1x BST, https://gatekeeper-kinglhb.vercel.app)

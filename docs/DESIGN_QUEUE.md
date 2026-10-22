@@ -1,3 +1,5 @@
+Discord is out of scope for the demo.
+
 # Greenlight — Moderator Review Queue (`/queue`) design brief
 
 **Goal:** a community lead clears a week of applications in ~10 minutes, live on a projector. Each row is one application with a recommended **decision** (accept / ask / decline), a **score**, a **reason that quotes a community rule**, **signal chips**, a **channel badge**, and a **reply draft** sent with one click.
