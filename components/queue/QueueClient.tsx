@@ -434,7 +434,7 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
   const failed = !data && status === "error";
 
   return (
-    <div className="flex flex-col bg-white text-[17px] text-slate-900 md:h-[calc(100dvh-4rem)]">
+    <div className="flex flex-col bg-white text-[17px] text-slate-900 md:h-[calc(100dvh-66px)] md:overflow-hidden">
       {/* Top bar */}
       <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-3 border-b-2 border-slate-200 px-4 py-3 sm:px-6">
         <div className="mr-auto min-w-0 lg:mr-0">
@@ -512,7 +512,7 @@ export default function QueueClient({ useMocks }: { useMocks: boolean }) {
         <div className="flex flex-1 flex-col md:min-h-0 md:flex-row">
           {/* List */}
           <div className="flex flex-col border-b-2 border-slate-200 md:min-h-0 md:w-2/5 md:border-b-0 md:border-r-2">
-            <div className="max-h-[42dvh] overflow-y-auto md:max-h-none md:flex-1" aria-busy={loading || undefined}>
+            <div className="relative max-h-[42dvh] overflow-y-auto md:max-h-none md:flex-1" aria-busy={loading || undefined}>
               {loading ? (
                 <QueueListSkeleton />
               ) : visible.length === 0 ? (

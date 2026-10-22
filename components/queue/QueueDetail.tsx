@@ -77,7 +77,7 @@ export function QueueDetail({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      <div className="relative min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
         <article
           key={app.id}
           aria-label={`Application from ${app.name || app.handle || "applicant"}`}
